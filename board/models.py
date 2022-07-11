@@ -15,4 +15,4 @@ class Comment(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField(auto_now_add=True)
-
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
