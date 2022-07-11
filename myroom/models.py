@@ -7,7 +7,7 @@ class Furniture(models.Model):
     height = models.IntegerField()
     url_left = models.URLField()
     url_right = models.URLField()
-    price = models.IntegerField(max_length=10)
+    price = models.IntegerField()
 
 
 class MyFurniture(models.Model):
