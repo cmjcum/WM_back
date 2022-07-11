@@ -28,8 +28,8 @@ class User(AbstractBaseUser):
     username = models.CharField("사용자 이름", max_length=20, unique=True)
     nickname = models.CharField("게시판 이름", max_length=20, unique=True)
     password = models.CharField("비밀번호", max_length=128)
-    follow = models.ManyToManyField("user.User", null=True)
-    like = models.ManyToManyField("user.User", null=True)
+    follow = models.ManyToManyField("self", null=True)
+    like = models.ManyToManyField("self", null=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
