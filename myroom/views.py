@@ -11,30 +11,26 @@ from myroom.seriailzers import GuestBookModelSerializer
 from myroom.models import GuestBook as GuestBookModel
 
 from user.models import UserInfo as UserInfoModel
+from user.models import User as UserModel
+
 
 
 
 
 class UserInfoView(APIView):
-    # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
     permission_classes = [permissions.AllowAny] # 누구나 view 조회 가능
+    # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
     # permission_classes = [permissions.IsAdminUser] # admin만 view 조회 가능
 
-    def get(self, request):
+    def get(self, request, owner_id):
+        # 로그인한 user의 정보 / 방문한 마이룸의 정보
         user = request.user
-        print(user)
-        # resident_data = user.filter(id=user.id)
-        # request.data["user"] = request.user.id
-
-        serializer_room_data = RoomDataSerializer(user, many=True).data
-        serializer_resident_data = ResidentDataSerializer(user, many=True).data
-
-        profile_data = {
-            # 주민등록증
-            "resident_data" : serializer_resident_data,
-            # 마이룸 정보
-            "room_data" : serializer_room_data,
-        }
+        owner = UserModel.objects.get(id=owner_id)
+        if user == owner:
+            profile_data = ResidentDataSerializer(user, many=True).data
+        else:
+            profile_data = ResidentDataSerializer(user, many=True).data
+            profile_data = RoomDataSerializer(owner, many=True).data
 
         return Response(profile_data, status=status.HTTP_200_OK)
 
