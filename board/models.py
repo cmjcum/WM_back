@@ -9,10 +9,10 @@ class Article(models.Model):
     picture_url = models.URLField()
     create_date = models.DateTimeField(auto_now_add=True)
 
-
 class Comment(models.Model):
     author = models.ForeignKey('user.User', on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    
