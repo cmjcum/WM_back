@@ -8,12 +8,11 @@ from user.models import UserInfo as UserInfoModel
 from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 
+import boto3
+
 
 class ArticleSerializer(serializers.ModelSerializer):
-
-    # def get_created(self, obj):
-    #     return dateformat.format(obj.created, 'y.m.d')
-
+    
     def validate(self, data):
         if len(data.get('content')) <= 5:
             raise serializers.ValidationError(
@@ -22,9 +21,8 @@ class ArticleSerializer(serializers.ModelSerializer):
 
         return data
 
-    def create(self, validated_data):
+    def create(self, validated_data):   
         article = ArticleModel(**validated_data)
-        print(article)
         article.save()
 
         return validated_data
