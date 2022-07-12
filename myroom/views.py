@@ -8,20 +8,26 @@ from myroom.seriailzers import ResidentDataSerializer
 from myroom.seriailzers import RoomDataSerializer
 from myroom.seriailzers import GuestBookModelSerializer
 
+from myroom.models import GuestBook as GuestBookModel
+
+from user.models import UserInfo as UserInfoModel
+
+
 
 
 class UserInfoView(APIView):
-    permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
-    # permission_classes = [permissions.AllowAny] # 누구나 view 조회 가능
+    # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
+    permission_classes = [permissions.AllowAny] # 누구나 view 조회 가능
     # permission_classes = [permissions.IsAdminUser] # admin만 view 조회 가능
 
     def get(self, request):
         user = request.user
-        resident_data = user.filter(id=user.id)
+        print(user)
+        # resident_data = user.filter(id=user.id)
         # request.data["user"] = request.user.id
 
         serializer_room_data = RoomDataSerializer(user, many=True).data
-        serializer_resident_data = ResidentDataSerializer(resident_data, many=True).data
+        serializer_resident_data = ResidentDataSerializer(user, many=True).data
 
         profile_data = {
             # 주민등록증
@@ -34,19 +40,19 @@ class UserInfoView(APIView):
 
 
 class GuestBookView(APIView):
-    permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
+    permission_classes = [permissions.AllowAny] # 누구나 view 조회 가능
+    # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
 
     # 방명록 조회
     def get(self, request):
-        guest_book = request.content
+        guest_book = GuestBookModel.objects.filter(content='')
         serializer_guest_book = GuestBookModelSerializer(guest_book, many=True).data
         return Response(serializer_guest_book, status=status.HTTP_200_OK)
 
     # 방명록 작성
     def post(self, request):
-
         serializer_guest_book = GuestBookModelSerializer(data=request.data)
-        if serializer_guest_book.is_valid(raise_exception=True):
+        if serializer_guest_book.is_valid():
             serializer_guest_book.save()
             return Response({'message': '방명록 작성 완료!'})
         else:
@@ -54,5 +60,5 @@ class GuestBookView(APIView):
             # return Response({'message': f'{serializer_guest_book.errors}'}, 400)
 
     # 방명록 삭제
-    def delete(self, request):
-        return Response({'message': 'delete method!!'})
+    # def get(self, request):
+        # return Response({'message': 'delete method!!'})
