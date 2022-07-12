@@ -46,7 +46,9 @@ class GuestBookView(APIView):
         return Response(serializer_guest_book, status=status.HTTP_200_OK)
 
     # 방명록 작성
-    def post(self, request):
+    def post(self, request, owner_id):
+        request.data['author'] = request.user.id
+        request.data['owner'] = owner_id
         serializer_guest_book = GuestBookModelSerializer(data=request.data)
         if serializer_guest_book.is_valid():
             serializer_guest_book.save()
