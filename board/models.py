@@ -6,7 +6,7 @@ class Article(models.Model):
     planet = models.ForeignKey('user.Planet', null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=50)
     content = models.TextField()
-    picture_url = models.URLField()
+    picture_url = models.URLField(blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):

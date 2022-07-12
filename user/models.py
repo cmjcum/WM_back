@@ -8,7 +8,7 @@ class UserManager(BaseUserManager):
         if not username:
             raise ValueError('Users must have an username')
         user = self.model(
-            username=username,
+            username=username
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -60,7 +60,7 @@ class UserInfo(models.Model):
     birthday = models.DateField()
     portrait = models.URLField()
     floor = models.IntegerField()
-    room_number = models.IntegerField(unique=True)
+    room_number = models.IntegerField()
     identification_number = models.IntegerField()
     create_date = models.DateField(auto_now_add=True)
     coin = models.IntegerField()
