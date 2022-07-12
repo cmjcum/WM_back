@@ -1,6 +1,7 @@
 from django.db import models
 
-# Create your models here.
+
+# 가구
 class Furniture(models.Model):
     name = models.CharField(max_length=15)
     width = models.IntegerField()
@@ -9,14 +10,22 @@ class Furniture(models.Model):
     url_right = models.URLField()
     price = models.IntegerField()
 
-
+# 나의 가구
 class MyFurniture(models.Model):
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
     furniture = models.ForeignKey(Furniture, on_delete=models.CASCADE)
 
-
+# 가구 위치
 class FurniturePosition(models.Model):
     myfurniture = models.ForeignKey(Furniture, on_delete=models.CASCADE)
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
     pos_x = models.IntegerField()
     pos_y = models.IntegerField()
+
+
+# 방명록
+class GuestBook(models.Model):
+    author = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    owner = models.ForeignKey('user.User', on_delete=models.CASCADE) 
+    content = models.TextField()
+    create_date = models.DateTimeField(auto_now_add=True)
