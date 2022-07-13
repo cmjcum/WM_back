@@ -1,4 +1,5 @@
 # Create your models here.
+from telnetlib import SE
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
@@ -22,6 +23,12 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.save(using=self._db)
         return user
+
+
+class Planet(models.Model):
+    name = models.CharField("행성 이름", max_length=10)
+    max_floor = models.IntegerField()
+    max_number = models.IntegerField()
 
 
 class User(AbstractBaseUser):
@@ -55,6 +62,8 @@ class User(AbstractBaseUser):
 
 
 class UserInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    planet = models.ForeignKey(Planet, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=10)
     name_eng = models.CharField(max_length=30)
     birthday = models.DateField()
@@ -79,3 +88,4 @@ class Planet(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+

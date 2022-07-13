@@ -25,9 +25,9 @@ SECRET_KEY = 'django-insecure-(3zljor6agu*my72j%$$q0&@vqr_#uy^w=*lo1uy6#&6xod2iq
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = "user.User"
 
 # Application definition
 
@@ -150,8 +150,6 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser'
     ]
 }
-
-AUTH_USER_MODEL = 'user.User'
 
 SIMPLE_JWT = {
 		# Access 토큰 유효 시간 설정하기
