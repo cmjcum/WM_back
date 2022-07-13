@@ -58,21 +58,12 @@ class GuestBookView(APIView):
         else:
             return Response({'message': '다시 입력해 주세요'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # TODO 방명록 삭제
-    def delete(self, request, owner_id, guest_book_id):
-        guest_book_list = GuestBookModel.objects.filter(owner_id=owner_id)
-        guest_book = guest_book_list.objects.filter(guest_book_id=guest_book_id)
-        guest_book.delete()
+    # DONE 방명록 삭제
+    def delete(self, request, guest_book_id):
+        guest_book = GuestBookModel.objects.get(id=guest_book_id)
 
-        return Response({'message': '방명록이 삭제되었습니다.'})
+        if guest_book.author == request.user:
+            guest_book.delete()
+            return Response({'message': '방명록이 삭제되었습니다.'})
 
-        # 첫 번째 삭제
-        # guest_book = GuestBookModel.objects.filter(author=request.user, owner=owner_id).first()
-        # guest_book = GuestBookModel.objects.filter(author=request.user).first()
-        # guest_book = GuestBookModel.objects.filter(owner=owner_id).first()
-        # 전부 삭제
-        # guest_book = GuestBookModel.objects.all()
-        # guest_book = GuestBookModel.objects.filter(owner_id=owner_id)
-        # 처음 한번만 삭제?
-        # guest_book = GuestBookModel.objects.get(id=owner_id)
-
+        return Response({'message': '권한이 없습니다.'})
