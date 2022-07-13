@@ -19,13 +19,21 @@ class ResidentDataSerializer(serializers.ModelSerializer):
         model = UserInfoModel
         fields = ["name", "birthday", "portrait", "coin"]
 
+
 class RoomDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfoModel
         fields = ["name", "portrait"]
 
 
-class GuestBookModelSerializer(serializers.ModelSerializer):
+class PostGuestBookModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuestBookModel
+        fields = ["content","author", "owner"]
+
+
+class GetGuestBookModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuestBookModel
         fields = ["content"]
+
