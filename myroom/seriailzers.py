@@ -14,7 +14,7 @@ from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 
 
-class ResidentDataSerializer(serializers.ModelSerializer):
+class UserInfoModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfoModel
         fields = ["name", "birthday", "portrait", "coin"]
@@ -23,7 +23,7 @@ class ResidentDataSerializer(serializers.ModelSerializer):
 class RoomDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfoModel
-        fields = ["name", "portrait"]
+        fields = ["name" "portrait"]
 
 
 class PostGuestBookModelSerializer(serializers.ModelSerializer):
@@ -35,5 +35,6 @@ class PostGuestBookModelSerializer(serializers.ModelSerializer):
 class GetGuestBookModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuestBookModel
-        fields = ["content"]
+        fields = "__all__"
+        # fields = ["content"]
 

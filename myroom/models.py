@@ -28,5 +28,4 @@ class GuestBook(models.Model):
     author = models.ForeignKey('user.User', related_name='author_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('user.User', related_name='owner_set', on_delete=models.CASCADE)
     content = models.TextField()
-    # content = models.TextField(null=True)
     create_date = models.DateTimeField(auto_now_add=True)
