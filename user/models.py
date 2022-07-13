@@ -1,4 +1,5 @@
 # Create your models here.
+from telnetlib import SE
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
@@ -24,12 +25,18 @@ class UserManager(BaseUserManager):
         return user
 
 
+class Planet(models.Model):
+    name = models.CharField("행성 이름", max_length=10)
+    max_floor = models.IntegerField()
+    max_number = models.IntegerField()
+
+
 class User(AbstractBaseUser):
     username = models.CharField("사용자 이름", max_length=20, unique=True)
     nickname = models.CharField("게시판 이름", max_length=20, unique=True)
     password = models.CharField("비밀번호", max_length=128)
-    follow = models.ManyToManyField("self", null=True)
-    like = models.ManyToManyField("self", null=True)
+    follow = models.ManyToManyField("self", blank=True)
+    like = models.ManyToManyField("self", blank=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -55,6 +62,8 @@ class User(AbstractBaseUser):
 
 
 class UserInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    planet = models.ForeignKey(Planet, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=10)
     name_eng = models.CharField(max_length=30)
     birthday = models.DateField()
@@ -72,7 +81,3 @@ class ArticleLike(models.Model):
     article = models.ForeignKey("board.Article", on_delete=models.CASCADE)
 
 
-class Planet(models.Model):
-    name = models.CharField("행성 이름", max_length=10)
-    max_floor = models.IntegerField()
-    max_number = models.IntegerField()
