@@ -12,7 +12,6 @@ from myroom.seriailzers import GetGuestBookModelSerializer
 from myroom.models import GuestBook as GuestBookModel
 
 from user.models import UserInfo as UserInfoModel
-from user.models import User as UserModel
 
 # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
 # permission_classes = [permissions.AllowAny] # 누구나 view 조회 가능
@@ -76,7 +75,4 @@ class GuestBookView(APIView):
         # guest_book = GuestBookModel.objects.filter(owner_id=owner_id)
         # 처음 한번만 삭제?
         # guest_book = GuestBookModel.objects.get(id=owner_id)
-
-
-class 
 

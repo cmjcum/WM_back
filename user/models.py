@@ -1,9 +1,17 @@
 # Create your models here.
-from telnetlib import SE
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
+class Planet(models.Model):
+    name = models.CharField("행성 이름", max_length=10)
+    max_floor = models.IntegerField()
+    max_number = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.name}'
+
+        
 class UserManager(BaseUserManager):
     def create_user(self, username, password=None):
         if not username:
@@ -23,12 +31,6 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.save(using=self._db)
         return user
-
-
-class Planet(models.Model):
-    name = models.CharField("행성 이름", max_length=10)
-    max_floor = models.IntegerField()
-    max_number = models.IntegerField()
 
 
 class User(AbstractBaseUser):
@@ -81,11 +83,4 @@ class ArticleLike(models.Model):
     article = models.ForeignKey("board.Article", on_delete=models.CASCADE)
 
 
-class Planet(models.Model):
-    name = models.CharField("행성 이름", max_length=10)
-    max_floor = models.IntegerField()
-    max_number = models.IntegerField()
-
-    def __str__(self):
-        return f'{self.name}'
 
