@@ -76,3 +76,6 @@ class Planet(models.Model):
     name = models.CharField("행성 이름", max_length=10)
     max_floor = models.IntegerField()
     max_number = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.name}'

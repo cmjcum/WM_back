@@ -27,19 +27,27 @@ class BoardListView(APIView):
 class BoardView(APIView):
     permission_classes = [permissions.AllowAny] 
 
-    def get(self, request, planet):
+    def get(self, request, planet_id):
         '''
         게시글 목록을 조회합니다. //  게시글 제목 (댓글수) (사진유무아이콘?), 작성자, 작성일 
         '''
-        return Response({'message': 'get method!!'}, status=status.HTTP_200_OK)
+        # user = request.user
+        articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')
+        print(articles)
+        article_serializer = ArticleSerializer(articles, many=True).data
+        # article_serializer = CommentSerializer(articles, many=True).data
+        # print(article_serializer)
+
+        return Response(article_serializer, status=status.HTTP_200_OK)
+        # return Response({'message': 'get method!!'}, status=status.HTTP_200_OK)
         
     def post(self, request, planet_id):
         '''
         게시글을 작성합니다.
         사진이 있을 때는 폼데이터...
-        사진이 없어버리면 json..........ㅜ
+        사진이 없어버리면 json..........
         '''
-        print(request.data)
+        print(request.data._mutable)
         user = request.user.id
 
         if request.data.get('pic',None) != None:
@@ -59,10 +67,10 @@ class BoardView(APIView):
             url = f'https://mysparta84.s3.ap-northeast-2.amazonaws.com/{filename}'
             request.data['picture_url'] = url
 
-        # request.data._mutable = True
+        request.data._mutable = True
         request.data['author'] = user
         request.data['planet'] = planet_id
-        # request.data._mutable = False
+        request.data._mutable = False
 
         article_serializer = ArticleSerializer(data=request.data)
 
@@ -83,7 +91,7 @@ class BoardView(APIView):
 class CommentView(APIView):
     permission_classes = [permissions.AllowAny] 
 
-    # def get(self, request):
+    # def get(self, request, planet_id, article_id, ):
     #     return Response({'message': 'get method!!'}, status=status.HTTP_200_OK)
         
     def post(self, request, planet_id, article_id, reply_id):
@@ -99,5 +107,6 @@ class CommentView(APIView):
 class CommentList(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
 
-    def get_queryset(self):
+    def get_queryset(self): 
         queryset = CommentModel.objects.filter(parent=None)
+        return queryset

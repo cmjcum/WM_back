@@ -23,5 +23,5 @@ class Comment(models.Model):
     def __str__(self):
         if self.parent == None:
             return f'[{self.article.title}]  {self.content}'
-
+            
         return f'[{self.article.title}]  {self.content} ({self.parent.id}의 대댓글)'

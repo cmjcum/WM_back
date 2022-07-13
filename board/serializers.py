@@ -8,10 +8,33 @@ from user.models import UserInfo as UserInfoModel
 from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 
-import boto3
 
+class RecursiveSerializer(serializers.Serializer):
+    def to_representation(self, instance):
+        serializer = self.parent.parent.__class__(instance, context=self.context)
+        return serializer.data
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    reply = serializers.SerializerMethodField()
+    # reply = RecursiveSerializer(many=True, read_only=True)
+    article = serializers.SlugRelatedField(queryset=ArticleModel.objects.all(), slug_field='title')
+
+    def get_reply(self, instance):
+        # recursive
+        serializer = self.__class__(instance.reply, many=True)
+        serializer.bind('', self)
+        return serializer.data
+
+    class Meta:
+        model = CommentModel
+        fields = ('id', 'author', 'article', 'parent', 'content', 'reply')
+        # fields = "__all__"
+        #   fields = ["fieldname"]
+        
 
 class ArticleSerializer(serializers.ModelSerializer):
+    reply = CommentSerializer(many=True, read_only=True)
     
     def validate(self, data):
         if len(data.get('content')) <= 5:
@@ -42,27 +65,3 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = ArticleModel
         fields = "__all__"
         #   fields = ["fieldname"]
-
-
-class RecursiveSerializer(serializers.Serializer):
-    def to_representation(self, instance):
-        serializer = self.parent.parent.__class__(instance, context=self.context)
-        return serializer.data
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    reply = serializers.SerializerMethodField()
-    article = serializers.SlugRelatedField(queryset=ArticleModel.objects.all(), slug_field='title')
-
-    def get_reply(self, instance):
-        # recursive
-        serializer = self.__class__(instance.reply, many=True)
-        serializer.bind('', self)
-        return serializer.data
-
-    class Meta:
-        model = CommentModel
-        fields = ('id', 'author', 'article', 'parent', 'content', 'reply')
-        # fields = "__all__"
-        #   fields = ["fieldname"]
-        
