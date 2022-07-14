@@ -35,6 +35,4 @@ class PostGuestBookModelSerializer(serializers.ModelSerializer):
 class GetGuestBookModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuestBookModel
-        fields = "__all__"
-        # fields = ["content"]
-
+        fields = ["content"]
