@@ -29,8 +29,19 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "user.User"
 
-# Application definition
+# 한국 시간 설정
+LANGUAGE_CODE = 'en-us'
 
+TIME_ZONE = 'Asia/Seoul'  # 한국 시간 적용 
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = False  # False 로 설정해야 DB에 변경 된 TIME_ZONE 이 반영 됨 
+
+
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -185,3 +196,4 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+

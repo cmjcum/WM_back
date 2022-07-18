@@ -14,6 +14,8 @@ from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 
 
+
+
 class UserInfoModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfoModel
@@ -33,8 +35,11 @@ class PostGuestBookModelSerializer(serializers.ModelSerializer):
 
 
 class GetGuestBookModelSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = GuestBookModel
-        fields = "__all__"
-        # fields = ["content"]
+        fields = ["content", "create_date"] # User.nickname 을 가져와야 한다. 
 
+# class UserModelSerializer(serializers.ModelSerializer):
+#     model = UserModel
+#     fields = "__all__"

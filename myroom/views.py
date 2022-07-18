@@ -28,9 +28,6 @@ class UserInfoView(APIView):
         user = UserInfoModel.objects.filter(user__id=owner_id)
         # UserInfoModel에서 id가 owner_id 인 값을 가져온다.
         owner = UserInfoModel.objects.filter(id=owner_id)
-        # owner = UserInfoModel.objects.filter(owner_id=owner_id)
-        # owner = UserInfoModel.objects.filter(owner__id=owner_id)
-
 
         # user id와 owner id 가 같다면
         if request.user.id == owner_id:
@@ -46,7 +43,7 @@ class UserInfoView(APIView):
 class GuestBookView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    # DONE 방명록 조회
+    # TODO 방명록 조회 / 작성일자와 작성자도 이름도 보여주어야 한다.
     def get(self, request, owner_id):
         # __ 는 참조하고 있는 테이블의 필드를 가져온다.(__연결고리)
         guest_book = GuestBookModel.objects.filter(owner__id=owner_id)
@@ -79,10 +76,10 @@ class GuestBookView(APIView):
             # guest_book_id 를 삭제해준다.
             guest_book.delete()
             return Response({'message': '방명록이 삭제되었습니다.'})
-
         return Response({'message': '권한이 없습니다.'})
 
 
+# DONE 좋아요
 class LikeUserModelView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -102,6 +99,7 @@ class LikeUserModelView(APIView):
                 return Response({'message': '좋아요 추가!'})
 
 
+# DONE 팔로우
 class FollowUserModelView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
