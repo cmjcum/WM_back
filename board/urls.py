@@ -11,7 +11,7 @@ urlpatterns = [
     path('<int:planet_id>/edit/<int:article_id>/', views.BoardView.as_view()),
     path('<int:planet_id>/del/<int:article_id>/', views.BoardView.as_view()),
 
-    path('<int:planet_id>/<int:article_id>/post/', views.CommentView.as_view()),
+    path('<int:planet_id>/<int:article_id>/<int:reply_id>/', views.CommentView.as_view()),
     path('<int:planet_id>/<int:article_id>/edit/<int:reply_id>/', views.CommentView.as_view()),
     path('<int:planet_id>/<int:article_id>/del/<int:reply_id>/', views.CommentView.as_view()),
 ]

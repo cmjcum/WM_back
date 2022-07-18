@@ -40,26 +40,32 @@ class ArticleSerializer(serializers.ModelSerializer):
     create_date = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
 
-    def get_comments(self, obj):
-        comments = obj.comment_set.filter(parent=None)
-        serializer = CommentSerializer(comments, many=True)
-        return serializer.data
-    
     def get_create_date(self, obj):
-        return dateformat.format(obj.create_date, 'y.m.d H:i:s')
+        try:
+            return dateformat.format(obj.create_date, 'y.m.d H:i:s')
+
+        except:
+            pass
+
+    def get_comments(self, obj):
+        try:
+            comments = obj.comment_set.filter(parent=None)
+            serializer = CommentSerializer(comments, many=True)
+            return serializer.data
+            
+        except:
+            pass
 
     def validate(self, data):
         if len(data.get('content')) <= 5:
             raise serializers.ValidationError(
                 detail={"error": "5글자를 넘아야 합니다."},
             )
-
         return data
 
     def create(self, validated_data):   
         article = ArticleModel(**validated_data)
         article.save()
-
         return validated_data
 
     def update(self, instance, validated_data):
@@ -70,7 +76,6 @@ class ArticleSerializer(serializers.ModelSerializer):
                 value = value + f' ({formatted_date} 수정)'
                 setattr(instance, key, value)
         instance.save()
-
         return instance
 
     class Meta:
