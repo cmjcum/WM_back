@@ -19,8 +19,9 @@ class MyFurniture(models.Model):
 class FurniturePosition(models.Model):
     myfurniture = models.ForeignKey(Furniture, on_delete=models.CASCADE)
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    pos_x = models.IntegerField()
-    pos_y = models.IntegerField()
+    pos_x = models.FloatField()
+    pos_y = models.FloatField()
+    is_left = models.BooleanField(default=True)
 
 
 # 방명록
