@@ -76,3 +76,39 @@ class GuestBookView(APIView):
         # 처음 한번만 삭제?
         # guest_book = GuestBookModel.objects.get(id=owner_id)
 
+
+from .models import MyFurniture
+from .models import FurniturePosition
+from .seriailzers import MyFurnitureSerializer
+from .seriailzers import FurniturePositionSerializer
+
+class TestView(APIView):
+    def get(self, request):
+        furnitures = MyFurniture.objects.filter(user=request.user)
+        my_furniture_serializer = MyFurnitureSerializer(furnitures, many=True).data
+        return Response({'my_furniture': my_furniture_serializer}, status=status.HTTP_200_OK)
+
+
+class MyRoomTestView(APIView):
+    def get(self, request):
+        furniture_position_list = FurniturePosition.objects.filter(user=request.user)
+        furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
+        return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        FurniturePosition.objects.filter(user=request.user).delete()
+        receive_datas = request.data['data']
+        for data in receive_datas:
+            data['user'] = request.user.id
+
+        print(receive_datas)
+
+        furniture_position_serializer = FurniturePositionSerializer(data=request.data['data'], many=True)
+
+        if furniture_position_serializer.is_valid():
+            furniture_position_serializer.save()
+            return Response(status=status.HTTP_200_OK)
+
+        print(furniture_position_serializer.errors)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
