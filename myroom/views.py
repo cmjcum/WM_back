@@ -90,18 +90,18 @@ class TestView(APIView):
         
     def post(self, request):
         FurniturePosition.objects.filter(user=request.user).delete()
-        receive_datas = request.data['data']
+        furniture_positions = request.data['furniture_positions']
 
-        for data in receive_datas:
-            if data == None:
-                receive_datas.remove(data)
+        for furniture_position in furniture_positions:
+            if furniture_position == None:
+                furniture_positions.remove(furniture_position)
 
-        for data in receive_datas:
-            data['user'] = request.user.id
+        for furniture_position in furniture_positions:
+            furniture_position['user'] = request.user.id
 
-        print(receive_datas)
+        print(furniture_positions)
 
-        furniture_position_serializer = FurniturePositionSerializer(data=request.data['data'], many=True)
+        furniture_position_serializer = FurniturePositionSerializer(data=request.data['furniture_positions'], many=True)
 
         if furniture_position_serializer.is_valid():
             furniture_position_serializer.save()
