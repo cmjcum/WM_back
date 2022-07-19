@@ -43,7 +43,7 @@ class UserInfoView(APIView):
 class GuestBookView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    # TODO 방명록 조회 / 작성일자와 작성자도 이름도 보여주어야 한다.
+    # TODO 방명록 조회 / 작성자 이름도 보여주어야 한다.
     def get(self, request, owner_id):
         # __ 는 참조하고 있는 테이블의 필드를 가져온다.(__연결고리)
         guest_book = GuestBookModel.objects.filter(owner__id=owner_id)
