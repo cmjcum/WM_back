@@ -14,6 +14,8 @@ from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 
 
+
+
 class UserInfoModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfoModel
@@ -33,8 +35,37 @@ class PostGuestBookModelSerializer(serializers.ModelSerializer):
 
 
 class GetGuestBookModelSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = GuestBookModel
-        fields = "__all__"
-        # fields = ["content"]
+        fields = ["content", "create_date"] # User.nickname 을 가져와야 한다. 
 
+
+# ////////////////////////////////////////////////////////////////////////
+from .models import Furniture
+from .models import MyFurniture
+from .models import FurniturePosition
+
+class FurnitureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Furniture
+        fields = "__all__"
+
+
+class MyFurnitureSerializer(serializers.ModelSerializer):
+    furniture = FurnitureSerializer()
+
+    class Meta:
+        model = MyFurniture
+        fields = ['id', 'user', 'furniture']
+
+
+class FurniturePositionSerializer(serializers.ModelSerializer):
+    # myfurniture = serializers.SerializerMethodField()
+
+    # def get_myfurniture(self, obj):
+    #     return obj.myfurniture.id
+
+    class Meta:
+        model = FurniturePosition
+        fields = ['user', 'myfurniture', 'pos_x', 'pos_y', 'is_left']
