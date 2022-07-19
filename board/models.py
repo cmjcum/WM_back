@@ -10,7 +10,7 @@ class Article(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'[{self.planet.name} | {self.author.nickname}]  {self.title}'
+        return f'[{self.planet.name}/{self.author.nickname}]  {self.title}'
 
 
 class Comment(models.Model):
