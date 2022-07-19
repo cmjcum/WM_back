@@ -61,11 +61,13 @@ class MyFurnitureSerializer(serializers.ModelSerializer):
 
 
 class FurniturePositionSerializer(serializers.ModelSerializer):
-    # myfurniture = serializers.SerializerMethodField()
+    myfurniture_url = serializers.SerializerMethodField(read_only=True)
 
-    # def get_myfurniture(self, obj):
-    #     return obj.myfurniture.id
+    def get_myfurniture_url(self, obj):
+        if obj.is_left:
+            return obj.myfurniture.furniture.url_left
+        return obj.myfurniture.furniture.url_right
 
     class Meta:
         model = FurniturePosition
-        fields = ['user', 'myfurniture', 'pos_x', 'pos_y', 'is_left']
+        fields = ['user', 'myfurniture', 'pos_x', 'pos_y', 'is_left', 'myfurniture_url']

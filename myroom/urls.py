@@ -11,5 +11,5 @@ urlpatterns = [
     path('follow/<int:owner_id>/', views.FollowUserModelView.as_view()),
     # //////////////////////////////////////////////////////////////////
     path('test/', views.TestView.as_view()),
-    path('room/', views.MyRoomTestView.as_view()),
+    path('room/<owner_id>/', views.MyRoomTestView.as_view()),
 ]

@@ -151,8 +151,7 @@ class TestView(APIView):
 
 
 class MyRoomTestView(APIView):
-    # request user의 배치가 아닌 현재 마이룸 주인의 배치가 보이도록 변경
-    def get(self, request):
-        furniture_position_list = FurniturePosition.objects.filter(user=request.user)
+    def get(self, request, owner_id):
+        furniture_position_list = FurniturePosition.objects.filter(user=owner_id)
         furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
         return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)
