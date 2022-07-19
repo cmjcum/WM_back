@@ -87,17 +87,15 @@ class TestView(APIView):
         furnitures = MyFurniture.objects.filter(user=request.user)
         my_furniture_serializer = MyFurnitureSerializer(furnitures, many=True).data
         return Response({'my_furniture': my_furniture_serializer}, status=status.HTTP_200_OK)
-
-
-class MyRoomTestView(APIView):
-    def get(self, request):
-        furniture_position_list = FurniturePosition.objects.filter(user=request.user)
-        furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
-        return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)
-    
+        
     def post(self, request):
         FurniturePosition.objects.filter(user=request.user).delete()
         receive_datas = request.data['data']
+
+        for data in receive_datas:
+            if data == None:
+                receive_datas.remove(data)
+
         for data in receive_datas:
             data['user'] = request.user.id
 
@@ -112,3 +110,11 @@ class MyRoomTestView(APIView):
         print(furniture_position_serializer.errors)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyRoomTestView(APIView):
+    # request user의 배치가 아닌 현재 마이룸 주인의 배치가 보이도록 변경
+    def get(self, request):
+        furniture_position_list = FurniturePosition.objects.filter(user=request.user)
+        furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
+        return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)
