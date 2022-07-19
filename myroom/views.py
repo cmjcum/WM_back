@@ -112,3 +112,47 @@ class FollowUserModelView(APIView):
             else:
                 follow_data.follow.add(request.user)
                 return Response({'message': '팔로우 추가!'})
+
+
+# //////////////////////////////////////////////////////////////////////////////
+from .models import MyFurniture
+from .models import FurniturePosition
+from .seriailzers import MyFurnitureSerializer
+from .seriailzers import FurniturePositionSerializer
+
+class TestView(APIView):
+    def get(self, request):
+        furnitures = MyFurniture.objects.filter(user=request.user)
+        my_furniture_serializer = MyFurnitureSerializer(furnitures, many=True).data
+        return Response({'my_furniture': my_furniture_serializer}, status=status.HTTP_200_OK)
+        
+    def post(self, request):
+        FurniturePosition.objects.filter(user=request.user).delete()
+        furniture_positions = request.data['furniture_positions']
+
+        for furniture_position in furniture_positions:
+            if furniture_position == None:
+                furniture_positions.remove(furniture_position)
+
+        for furniture_position in furniture_positions:
+            furniture_position['user'] = request.user.id
+
+        print(furniture_positions)
+
+        furniture_position_serializer = FurniturePositionSerializer(data=request.data['furniture_positions'], many=True)
+
+        if furniture_position_serializer.is_valid():
+            furniture_position_serializer.save()
+            return Response(status=status.HTTP_200_OK)
+
+        print(furniture_position_serializer.errors)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyRoomTestView(APIView):
+    # request user의 배치가 아닌 현재 마이룸 주인의 배치가 보이도록 변경
+    def get(self, request):
+        furniture_position_list = FurniturePosition.objects.filter(user=request.user)
+        furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
+        return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)

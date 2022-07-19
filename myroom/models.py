@@ -17,10 +17,11 @@ class MyFurniture(models.Model):
 
 # 가구 위치
 class FurniturePosition(models.Model):
-    myfurniture = models.ForeignKey(Furniture, on_delete=models.CASCADE)
+    myfurniture = models.ForeignKey(MyFurniture, on_delete=models.CASCADE)
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    pos_x = models.IntegerField()
-    pos_y = models.IntegerField()
+    pos_x = models.FloatField()
+    pos_y = models.FloatField()
+    is_left = models.BooleanField(default=True)
 
 
 # 방명록

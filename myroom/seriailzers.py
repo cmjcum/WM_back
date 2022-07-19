@@ -40,6 +40,32 @@ class GetGuestBookModelSerializer(serializers.ModelSerializer):
         model = GuestBookModel
         fields = ["content", "create_date"] # User.nickname 을 가져와야 한다. 
 
-# class UserModelSerializer(serializers.ModelSerializer):
-#     model = UserModel
-#     fields = "__all__"
+
+# ////////////////////////////////////////////////////////////////////////
+from .models import Furniture
+from .models import MyFurniture
+from .models import FurniturePosition
+
+class FurnitureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Furniture
+        fields = "__all__"
+
+
+class MyFurnitureSerializer(serializers.ModelSerializer):
+    furniture = FurnitureSerializer()
+
+    class Meta:
+        model = MyFurniture
+        fields = ['id', 'user', 'furniture']
+
+
+class FurniturePositionSerializer(serializers.ModelSerializer):
+    # myfurniture = serializers.SerializerMethodField()
+
+    # def get_myfurniture(self, obj):
+    #     return obj.myfurniture.id
+
+    class Meta:
+        model = FurniturePosition
+        fields = ['user', 'myfurniture', 'pos_x', 'pos_y', 'is_left']
