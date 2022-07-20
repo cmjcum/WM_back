@@ -43,7 +43,7 @@ class UserInfoView(APIView):
 class GuestBookView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    # TODO 방명록 조회 / 작성자 이름도 보여주어야 한다.
+    # DONE 방명록 조회
     def get(self, request, owner_id):
         # __ 는 참조하고 있는 테이블의 필드를 가져온다.(__연결고리)
         guest_book = GuestBookModel.objects.filter(owner__id=owner_id)
@@ -57,7 +57,7 @@ class GuestBookView(APIView):
         # 방명록 작성을 위해 방명록 작성에 사용되는 GuestBook 모델의 정보를 가져온다.
         request.data['author'] = request.user.id
         request.data['owner'] = owner_id
-        # serializer 를 통해 값을 가져온다.//////
+        # serializer 를 통해 값을 가져온다.
         serializer_guest_book = PostGuestBookModelSerializer(data=request.data)
         # serializer_guest_book 값이 유효하다면
         if serializer_guest_book.is_valid():
@@ -151,8 +151,7 @@ class TestView(APIView):
 
 
 class MyRoomTestView(APIView):
-    # request user의 배치가 아닌 현재 마이룸 주인의 배치가 보이도록 변경
-    def get(self, request):
-        furniture_position_list = FurniturePosition.objects.filter(user=request.user)
+    def get(self, request, owner_id):
+        furniture_position_list = FurniturePosition.objects.filter(user=owner_id)
         furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
         return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)
