@@ -126,7 +126,7 @@ class BoardSerialzer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(queryset=UserModel.objects.all(), slug_field='nickname')
     create_date = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-    url = serializers.SerializerMethodField()
+    detail_url = serializers.SerializerMethodField()
 
     def get_create_date(self, obj):
         return dateformat.format(obj.create_date, 'y.m.d')
@@ -135,7 +135,7 @@ class BoardSerialzer(serializers.ModelSerializer):
         comments = obj.comment_set.all()
         return comments.count()
 
-    def get_url(self, obj):
+    def get_detail_url(self, obj):
         return f'/board/{obj.planet.id}/{obj.id}/'
 
 
@@ -146,7 +146,7 @@ class BoardSerialzer(serializers.ModelSerializer):
             # "planet",
             "author",
             "title",
-            "url",
+            "detail_url",
             "create_date",
             "comments",
         ]
