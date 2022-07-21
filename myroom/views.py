@@ -5,14 +5,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from myroom.seriailzers import UserInfoModelSerializer
-from myroom.seriailzers import RoomDataSerializer
 from myroom.seriailzers import PostGuestBookModelSerializer
 from myroom.seriailzers import GetGuestBookModelSerializer
-
 from myroom.models import GuestBook as GuestBookModel
-
 from user.models import UserInfo as UserInfoModel
 from user.models import User as UserModel
+
+from .models import MyFurniture
+from .models import FurniturePosition
+from .seriailzers import MyFurnitureSerializer
+from .seriailzers import FurniturePositionSerializer
+
+from myroom.seriailzers import RoomDataSerializer
 
 
 class UserInfoView(APIView):
@@ -102,13 +106,7 @@ class FollowUserModelView(APIView):
                 return Response({'message': '팔로우 추가!'})
 
 
-# //////////////////////////////////////////////////////////////////////////////
-from .models import MyFurniture
-from .models import FurniturePosition
-from .seriailzers import MyFurnitureSerializer
-from .seriailzers import FurniturePositionSerializer
-
-class TestView(APIView):
+class MyFurnitureView(APIView):
     def get(self, request):
         furnitures = MyFurniture.objects.filter(user=request.user)
         my_furniture_serializer = MyFurnitureSerializer(furnitures, many=True).data
@@ -138,7 +136,7 @@ class TestView(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class MyRoomTestView(APIView):
+class MyRoomView(APIView):
     def get(self, request, owner_id):
         furniture_position_list = FurniturePosition.objects.filter(user=owner_id)
         furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
