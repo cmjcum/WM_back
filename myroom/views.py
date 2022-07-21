@@ -49,7 +49,7 @@ class GuestBookView(APIView):
         guest_book = GuestBookModel.objects.filter(owner__id=owner_id)
         # GetGuestBookModelSerializer 의 값을 변수에 넣는다.
         serializer_guest_book = GetGuestBookModelSerializer(guest_book, many=True).data
-        # serializer_guest_book 를 Response 시킨다.
+        
         return Response(serializer_guest_book, status=status.HTTP_200_OK)
 
     # DONE 방명록 작성
@@ -75,8 +75,8 @@ class GuestBookView(APIView):
         if guest_book.author == request.user:
             # guest_book_id 를 삭제해준다.
             guest_book.delete()
-            return Response({'message': '방명록이 삭제되었습니다.'})
-        return Response({'message': '권한이 없습니다.'})
+            return Response({'message': '방명록이 삭제되었습니다.'}, status=status.HTTP_200_OK)
+        return Response({'message': '권한이 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # DONE 좋아요
