@@ -40,7 +40,7 @@ class GetGuestBookModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GuestBookModel
-        fields = ["content", "create_date", "nickname", "owner", "id", "author_id"]
+        fields = ["content", "create_date", "nickname", "id", "author_id"]
 
 
 # ////////////////////////////////////////////////////////////////////////
