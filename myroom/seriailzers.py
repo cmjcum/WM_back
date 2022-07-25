@@ -5,21 +5,16 @@ from user.models import UserInfo as UserInfoModel
 
 from django.utils import timezone, dateformat
 
-
 from myroom.models import Furniture as FurnitureModel
 from myroom.models import MyFurniture as MyFurnitureModel
 from myroom.models import FurniturePosition as FurniturePositionModel
 from user.models import UserManager as UserManagerModel
-from user.models import User as UserModel
 from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
-
+from user.models import User as UserModel
 
 
 class UserInfoModelSerializer(serializers.ModelSerializer):
-    # nickname = serializers.SerializerMethodField(read_only=True)
-    # def get_nickname(self, obj):
-    #     return obj.author.nickname
 
     class Meta:
         model = UserInfoModel
@@ -43,12 +38,9 @@ class GetGuestBookModelSerializer(serializers.ModelSerializer):
     def get_nickname(self, obj):
         return obj.author.nickname
 
-    # def get_create_date(self, obj):
-    #     return dateformat.format(obj.create_date, 'y.m.d')
-
     class Meta:
         model = GuestBookModel
-        fields = ["content", "create_date", "nickname", "author"]
+        fields = ["content", "create_date", "nickname", "id", "author_id"]
 
 
 # ////////////////////////////////////////////////////////////////////////
