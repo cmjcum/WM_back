@@ -26,15 +26,30 @@ class BoardListView(APIView):
         '''
         user = request.user.id
         user_data = UserModel.objects.get(id=user)
-        solar = PlanetModel.objects.get(name="Solar")
-        url = f'/board/{solar.id}/'
-        board_list = {"Solar":url}
+
+        # 관리자일 때
+        user_is_admin = UserModel.objects.get(id=user).is_admin
+        if user_is_admin:
+            all_board_list = {}
+            all_planets = PlanetModel.objects.all()
+            for planet in all_planets:
+                name = planet.name
+                url = f'board.html?board={planet.id}'
+                if name == 'Solar':
+                    pass
+                else:
+                    all_board_list[name] = url
+            return Response(all_board_list, status=status.HTTP_200_OK)
+
+        board_list = []
 
         try: # userinfo 존재
             my_planet = user_data.userinfo.planet
+            url = f'board.html?board={my_planet.id}'
             name = my_planet.name
-            url = f'/board/{my_planet.id}/'
-            board_list[name] = url
+            board_list.append(url)
+            board_list.append(name)
+            board_list.append(user)
 
         except: # userinfo 존재하지 않음
             pass
@@ -53,9 +68,16 @@ class BoardView(APIView):
         - 글 제목, 작성자, 작성일자, 코멘트 개수, pk(혹은 디테일 페이지 링크?)
         '''
         user = request.user.id
+        user_data = UserModel.objects.get(id=user)
+
+        #관리자일 때
+        user_is_admin = UserModel.objects.get(id=user).is_admin
+        if user_is_admin:
+            articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')
+            article_serializer = BoardSerialzer(articles, many=True).data
+            return Response(article_serializer, status=status.HTTP_200_OK)
 
         # 소속 행성 조회를 위한 접근 가능 게시판 리스트
-        user_data = UserModel.objects.get(id=user)
         solar = PlanetModel.objects.get(name="Solar").id
         board_list = [solar]
 
@@ -69,7 +91,6 @@ class BoardView(APIView):
         if planet_id in board_list:
             articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')
             article_serializer = BoardSerialzer(articles, many=True).data
-
             return Response(article_serializer, status=status.HTTP_200_OK)
         
         return Response({"detail":"조회 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
