@@ -26,15 +26,29 @@ class BoardListView(APIView):
         '''
         user = request.user.id
         user_data = UserModel.objects.get(id=user)
-        solar = PlanetModel.objects.get(name="Solar")
-        url = f'/board/{solar.id}/'
-        board_list = {"Solar":url}
+        user_is_admin = UserModel.objects.get(id=user).is_admin
+        print(user_is_admin)
+        if user_is_admin:
+            all_board_list = {}
+            all_planets = PlanetModel.objects.all()
+            for planet in all_planets:
+                name = planet.name
+                url = f'board.html?board={planet.id}'
+                if name == 'Solar':
+                    pass
+                else:
+                    all_board_list[name] = url
+            return Response(all_board_list, status=status.HTTP_200_OK)
+
+        board_list = []
 
         try: # userinfo 존재
             my_planet = user_data.userinfo.planet
+            url = f'board.html?board={my_planet.id}'
             name = my_planet.name
-            url = f'/board/{my_planet.id}/'
-            board_list[name] = url
+            board_list.append(url)
+            board_list.append(name)
+            board_list.append(user)
 
         except: # userinfo 존재하지 않음
             pass
@@ -58,6 +72,14 @@ class BoardView(APIView):
         user_data = UserModel.objects.get(id=user)
         solar = PlanetModel.objects.get(name="Solar").id
         board_list = [solar]
+
+        user_is_admin = UserModel.objects.get(id=user).is_admin
+        # print(user_is_admin)
+        if user_is_admin:
+            articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')
+            article_serializer = BoardSerialzer(articles, many=True).data
+
+            return Response(article_serializer, status=status.HTTP_200_OK)
 
         try: # userinfo 존재
             my_planet = user_data.userinfo.planet.id

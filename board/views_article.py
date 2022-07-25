@@ -22,9 +22,17 @@ class ArticleView(APIView):
         게시글 디테일 페이지를 표시합니다.
         '''
         user = request.user.id
+        user_data = UserModel.objects.get(id=user)
+        print(request.data)
+
+        # 관리자일 때
+        user_is_admin = UserModel.objects.get(id=user).is_admin
+        if user_is_admin:
+            article = ArticleModel.objects.get(id=article_id)
+            article_serializer = ArticleSerializer(article).data
+            return Response(article_serializer, status=status.HTTP_200_OK)
 
         # 소속 행성 조회를 위한 접근 가능 게시판 리스트
-        user_data = UserModel.objects.get(id=user)
         solar = PlanetModel.objects.get(name="Solar").id
         board_list = [solar]
 
@@ -43,15 +51,44 @@ class ArticleView(APIView):
         
         return Response({"detail":"조회 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-        
     def post(self, request, planet_id):
         '''
         게시글을 작성합니다.
         '''
         user = request.user.id
+        user_data = UserModel.objects.get(id=user)
+
+        # 관리자일 때
+        user_is_admin = UserModel.objects.get(id=user).is_admin
+        if user_is_admin:
+            data = request.data.copy()
+            data['author'] = user
+            data['planet'] = planet_id
+
+            if data.get('pic',None) != None:
+                pic = data.pop('pic')[0] 
+                extension = "." + pic.name.split('.')[-1] 
+                todays_date = dateformat.format(timezone.now(), 'ymdHis') 
+                filename = f'{user}{todays_date}{extension}'
+
+                s3 = boto3.client('s3')
+                s3.put_object(
+                    ACL="public-read",
+                    Bucket="mysparta84",
+                    Body=pic,
+                    Key=filename,
+                    ContentType=pic.content_type)
+
+                url = f'https://mysparta84.s3.ap-northeast-2.amazonaws.com/{filename}'
+                data['picture_url'] = url
+
+            article_serializer = ArticleSerializer(data=data)
+
+            if article_serializer.is_valid():
+                article_serializer.save()
+                return Response(article_serializer.data, status=status.HTTP_200_OK)
 
         # 소속 행성 조회를 위한 접근 가능 게시판 리스트
-        user_data = UserModel.objects.get(id=user)
         solar = PlanetModel.objects.get(name="Solar").id
         board_list = [solar]
 
