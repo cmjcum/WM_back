@@ -52,7 +52,7 @@ class CommentView(APIView):
             # print(article_serializer.errors)
             return Response(comment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-        return Response({"detail":"작성 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZE)
+        return Response({"detail":"작성 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
     def put(self, request, planet_id, article_id, reply_id):
         '''
