@@ -57,3 +57,7 @@ class UserInfoView(APIView):
 
         return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class PlanetView(APIView):
+    def get(self, request):
+        pass
