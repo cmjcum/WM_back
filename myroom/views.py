@@ -77,17 +77,18 @@ class LikeUserModelView(APIView):
 
     def post(self, request, owner_id):
         # 로그인한 유저라면
-        if request.user:
+        user = request.user 
+        if user:
             # UserModel에서 id 값이 owner_id 인게 있으면 값을 가져오고 아니면 404에러
-            like_data = get_object_or_404(UserModel, id=owner_id)
+            owner = get_object_or_404(UserModel, id=owner_id)
+            print(owner.like)
             # article 안에 pk가 있다면 id를 찾는다.
-            if like_data.like.filter(pk=request.user.id).exists():
+            if owner.like.filter(id=request.user.id).exists():
                 # pk 값을 remove()를 통해 지워준다.
-                like_data.like.remove(request.user)
+                owner.like.remove(request.user)
                 return Response({'message': '좋아요 삭제!'})
             else:
-                # article 안에 user를 추가해준다.
-                like_data.like.add(request.user)
+                owner.like.add(request.user)
                 return Response({'message': '좋아요 추가!'})
 
 
@@ -98,7 +99,7 @@ class FollowUserModelView(APIView):
     def post(self, request, owner_id):
         if request.user:
             follow_data = get_object_or_404(UserModel, id=owner_id)
-            if follow_data.follow.filter(pk=request.user.id).exists():
+            if follow_data.follow.filter(id=request.user.id).exists():
                 follow_data.follow.remove(request.user)
                 return Response({'message': '팔로우 삭제!'})
             else:
