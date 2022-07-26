@@ -20,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PlanetSerializer(serializers.ModelSerializer):
     empty_rooms = serializers.SerializerMethodField(read_only=True)
+    population = serializers.SerializerMethodField(read_only=True)
 
     def get_empty_rooms(self, obj):
         empty_rooms = []
@@ -36,6 +37,9 @@ class PlanetSerializer(serializers.ModelSerializer):
 
         return empty_rooms
 
+    def get_population(self, obj):
+        return obj.userinfo_set.all().count()
+
     class Meta:
         model = Planet
-        fields = ['name', 'max_floor', 'max_number', 'empty_rooms']
+        fields = ['name', 'max_floor', 'max_number', 'population', 'empty_rooms']
