@@ -9,6 +9,9 @@ import boto3
 
 from deeplearning.deeplearning_make_portrait import make_portrait
 
+from .serializers import PlanetSerializer
+from .models import Planet
+
 
 class UserView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -60,4 +63,7 @@ class UserInfoView(APIView):
 
 class PlanetView(APIView):
     def get(self, request):
-        pass
+        planets = Planet.objects.all()
+        planet_serializer = PlanetSerializer(planets, many=True).data
+        
+        return Response(planet_serializer, status=status.HTTP_200_OK)
