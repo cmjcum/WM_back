@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.utils import timezone, dateformat
 import boto3
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import ArticleSerializer, CommentSerializer, BoardSerialzer
 from .models import Article as ArticleModel
@@ -15,6 +16,7 @@ from user.models import UserInfo as UserInfoModel
 
 class BoardListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         '''
@@ -54,11 +56,13 @@ class BoardListView(APIView):
         except: # userinfo 존재하지 않음
             pass
 
+        board_list.append(user_data.nickname)
         return Response(board_list, status=status.HTTP_200_OK)
 
 
 class BoardView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, planet_id):
         '''
@@ -92,5 +96,7 @@ class BoardView(APIView):
             articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')
             article_serializer = BoardSerialzer(articles, many=True).data
             return Response(article_serializer, status=status.HTTP_200_OK)
-        
-        return Response({"detail":"조회 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # print(article_serializer.errors)
+        return Response(article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

@@ -9,36 +9,12 @@ from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    create_date = serializers.SerializerMethodField()
-    author = serializers.SlugRelatedField(queryset=UserModel.objects.all(), slug_field='nickname')
-    author_id = serializers.SerializerMethodField()
-    article = serializers.SlugRelatedField(queryset=ArticleModel.objects.all(), slug_field='title')
-    reply = serializers.SerializerMethodField()
-
-    def get_author_id(self, obj):
-        return obj.author.id
-
-    def get_create_date(self, obj):
-        try:
-            return dateformat.format(obj.create_date, 'y.m.d H:i:s')
-
-        except:
-            pass
-
-    def get_reply(self, instance):
-        try:
-            serializer = self.__class__(instance.comment_set, many=True)
-            serializer.bind('', self)
-            return serializer.data
-
-        except:
-            pass
+class CommentPostSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
-        if len(data.get('content')) <= 5:
+        if len(data.get('content')) < 0:
             raise serializers.ValidationError(
-                detail={"error": "5글자를 넘아야 합니다."},
+                detail={"error": "내용을 작성해주세요!"},
             )
         return data
 
@@ -52,54 +28,26 @@ class CommentSerializer(serializers.ModelSerializer):
 
         for key, value in validated_data.items():
             if key == 'content':
-                value = value + f' ({formatted_date} 수정)'
+                value = value + f'\r\n({formatted_date}에 마지막으로 수정됨)'
                 setattr(instance, key, value)
         instance.save()
         return instance
 
     class Meta:
         model = CommentModel
-        fields = [
-            "id",
-            "article",
-            "parent",
-            "author",
-            "author_id",
-            "content",
-            "create_date",
-            "reply",
-        ]
+        fields = "__all__"
 
 
-class ArticleSerializer(serializers.ModelSerializer):
-    create_date = serializers.SerializerMethodField()
-    comments = serializers.SerializerMethodField()
-    author = serializers.SlugRelatedField(queryset=UserModel.objects.all(), slug_field='nickname')
-    author_id = serializers.SerializerMethodField()
-
-    def get_author_id(self, obj):
-        return obj.author.id
-
-    def get_create_date(self, obj):
-        try:
-            return dateformat.format(obj.create_date, 'y.m.d H:i:s')
-
-        except:
-            pass
-
-    def get_comments(self, obj):
-        try:
-            comments = obj.comment_set.filter(parent=None)
-            serializer = CommentSerializer(comments, many=True)
-            return serializer.data
-
-        except:
-            pass
+class ArticlePostSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
-        if len(data.get('content')) <= 5:
+        if len(data.get('title')) < 0:
             raise serializers.ValidationError(
-                detail={"error": "5글자를 넘아야 합니다."},
+                detail={"error": "제목은 비워둘 수 없습니다."},
+            )
+        if len(data.get('content')) < 0:
+            raise serializers.ValidationError(
+                detail={"error": "내용은 비워둘 수 없습니다."},
             )
         return data
 
@@ -113,10 +61,81 @@ class ArticleSerializer(serializers.ModelSerializer):
 
         for key, value in validated_data.items():
             if key == 'content':
-                value = value + f' ({formatted_date} 수정)'
+                value = value + f'\r\n\r\n({formatted_date}에 마지막으로 수정됨)'
                 setattr(instance, key, value)
         instance.save()
         return instance
+
+    class Meta:
+        model = ArticleModel
+        fields = "__all__"
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    create_date = serializers.SerializerMethodField()
+    reply = serializers.SerializerMethodField()
+    reply_cnt = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
+
+    def get_author_name(self, obj):
+        return obj.author.nickname
+
+    def get_create_date(self, obj):
+        return dateformat.format(obj.create_date, 'y.m.d H:i:s')
+
+    def get_reply_cnt(self, obj):
+        try:
+            return obj.comment_set.all().count()
+        except:
+            return 0
+
+    def get_reply(self, obj):
+        try:
+            serializer = self.__class__(obj.comment_set, many=True)
+            serializer.bind('', self)
+            return serializer.data
+        except:
+            pass
+
+
+    class Meta:
+        model = CommentModel
+        fields = [
+            "id",
+            "article",
+            "parent",
+            "author",
+            "author_name",
+            "content",
+            "create_date",
+            "reply_cnt",
+            "reply",
+        ]
+
+
+class ArticleSerializer(serializers.ModelSerializer):
+    create_date = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+    comments_cnt = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
+
+    def get_author_name(self, obj):
+        return obj.author.nickname
+
+    def get_comments_cnt(self, obj):
+        return obj.comment_set.all().count()
+
+    def get_create_date(self, obj):
+        return dateformat.format(obj.create_date, 'y.m.d H:i:s')
+
+    def get_comments(self, obj):
+        try:
+            comments = obj.comment_set.filter(parent=None)
+            serializer = CommentSerializer(comments, many=True)
+            return serializer.data
+        except:
+            pass
+
 
     class Meta:
         model = ArticleModel
@@ -124,24 +143,24 @@ class ArticleSerializer(serializers.ModelSerializer):
             "id",
             "planet",
             "author",
-            "author_id",
+            "author_name",
             "title",
             "content",
             "picture_url",
             "create_date",
+            "comments_cnt",
             "comments",
         ]
 
+
 class BoardSerialzer(serializers.ModelSerializer):
-    # planet = serializers.SlugRelatedField(queryset=PlanetModel.objects.all(), slug_field='name')
-    author = serializers.SlugRelatedField(queryset=UserModel.objects.all(), slug_field='nickname')
     create_date = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     detail_url = serializers.SerializerMethodField()
-    author_id = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
 
-    def get_author_id(self, obj):
-        return obj.author.id
+    def get_author_name(self, obj):
+        return obj.author.nickname
 
     def get_create_date(self, obj):
         return dateformat.format(obj.create_date, 'y.m.d')
@@ -151,16 +170,15 @@ class BoardSerialzer(serializers.ModelSerializer):
         return comments.count()
 
     def get_detail_url(self, obj):
-        return f'article.html?board={obj.planet.id}?article={obj.id}'
+        return f'article.html?board={obj.planet.id}&article={obj.id}'
 
 
     class Meta:
         model = ArticleModel
         fields = [
             "id",
-            # "planet",
             "author",
-            "author_id",
+            "author_name",
             "title",
             "detail_url",
             "create_date",

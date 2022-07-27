@@ -6,8 +6,10 @@ urlpatterns = [
 
     path('<int:planet_id>/', views_board.BoardView.as_view()), # 게시판 목록 get
     
-    path('<int:planet_id>/<int:article_id>/', views_article.ArticleView.as_view()), # 게시글 상세 get
+    path('<int:planet_id>/<int:article_id>/', views_article.ArticleDetailView.as_view()), # 게시글 상세 get
+
     path('<int:planet_id>/post/', views_article.ArticleView.as_view()), # 게시글 post
+    path('<int:planet_id>/editor/<int:article_id>/', views_article.ArticleView.as_view()), # 게시글 수정페이지 get
     path('<int:planet_id>/edit/<int:article_id>/', views_article.ArticleView.as_view()), # 게시글 put
     path('<int:planet_id>/del/<int:article_id>/', views_article.ArticleView.as_view()), # 게시글 delete
 

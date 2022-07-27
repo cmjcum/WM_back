@@ -1,3 +1,4 @@
+import django.urls
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -5,6 +6,7 @@ from django.utils import timezone, dateformat
 import boto3
 
 from .serializers import ArticleSerializer, CommentSerializer, BoardSerialzer
+from .serializers import ArticlePostSerializer, CommentPostSerializer
 from .models import Article as ArticleModel
 from .models import Comment as CommentModel
 from user.models import ArticleLike as ArticleLikeModel
@@ -39,17 +41,19 @@ class CommentView(APIView):
             pass
 
         if planet_id in board_list: # 게시판 이용 권한 확인
-            article_data = ArticleModel.objects.get(id=article_id)
-            request.data['author'] = user_data.nickname
-            request.data['article'] = article_data.title
+            data = request.data.copy()
+            data['author'] = user
+            data['article'] = article_id
 
-            comment_serializer = CommentSerializer(data=request.data)
+            print(data)
+
+            comment_serializer = CommentPostSerializer(data=data)
 
             if comment_serializer.is_valid():
                 comment_serializer.save()
                 return Response(comment_serializer.data, status=status.HTTP_200_OK)
             
-            # print(article_serializer.errors)
+            print(comment_serializer.errors)
             return Response(comment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
         return Response({"detail":"작성 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -76,7 +80,7 @@ class CommentView(APIView):
             comment = CommentModel.objects.get(id=reply_id)
             
             if user == comment.author.id: # 게시글 작성자가 맞는지 확인
-                comment_serializer = CommentSerializer(comment, data=request.data, partial=True)
+                comment_serializer = CommentPostSerializer(comment, data=request.data, partial=True)
 
                 if comment_serializer.is_valid():
                     comment_serializer.save()
