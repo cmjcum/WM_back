@@ -29,7 +29,8 @@ class UserModelSerializer(serializers.ModelSerializer):
         return follow_count
 
     def get_following_count(self, obj):
-        return "테스트"
+        following_count = obj.follow_users.count()
+        return following_count
 
     class Meta:
         model = UserModel
