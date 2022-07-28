@@ -83,4 +83,8 @@ class ArticleLike(models.Model):
     article = models.ForeignKey("board.Article", on_delete=models.CASCADE)
 
 
-
+class PlanetLog(models.Model):
+    name = models.ForeignKey(Planet, on_delete=models.CASCADE)
+    floor = models.IntegerField()
+    room_number = models.IntegerField()
+    
