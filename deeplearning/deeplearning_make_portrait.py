@@ -122,6 +122,5 @@ def make_portrait(q, img_path, user_id):
 
     portrait_url = f'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/{user_id}.gif'
 
-    cv2.destroyAllWindows()
     q.put(portrait_url)
 

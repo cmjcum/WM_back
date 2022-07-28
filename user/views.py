@@ -30,10 +30,9 @@ q = Queue()
 p = None
 class UserInfoView(APIView):
     def post(self, request):
-        request.data['user'] = request.user.id
-        print(request.data)
-        print(datetime.now().strftime('%Y%m%d%H%M%S%f'))
         global q, p
+        
+        request.data['user'] = request.user.id
         
         # user_id = request.user.id
         # request.data['user'] = user_id
