@@ -101,8 +101,8 @@ class BoardSearchView(APIView):
 
     def get(self, request, planet_id, keyword):
         '''
-        게시글 검색
-        제목+내용
+        게시글을 검색합니다.
+        검색범위: 제목+내용+작성자
         '''
         user = request.user.id
         user_data = UserModel.objects.get(id=user)
@@ -133,6 +133,6 @@ class BoardSearchView(APIView):
 
             return Response(article_serializer, status=status.HTTP_200_OK)
 
-        print(article_serializer.errors)
+        # print(article_serializer.errors)
         return Response(article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

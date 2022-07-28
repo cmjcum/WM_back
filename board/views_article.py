@@ -13,7 +13,7 @@ from user.models import Planet as PlanetModel
 from user.models import User as UserModel
 
 
-# 게시글 CRUD
+# 게시글 R
 class ArticleDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
@@ -24,7 +24,6 @@ class ArticleDetailView(APIView):
         '''
         user = request.user.id
         user_data = UserModel.objects.get(id=user)
-        print(request.data)
 
         # 관리자일 때
         if user_data.is_admin:
@@ -46,13 +45,15 @@ class ArticleDetailView(APIView):
         if planet_id in board_list:
             article = ArticleModel.objects.get(id=article_id)
             article_serializer = ArticleSerializer(article).data
+            # print(user, article_serializer["likes"], bool(user in article_serializer["likes"]))
+            article_serializer["liked_this"] = bool(user in article_serializer["likes"])
 
             return Response(article_serializer, status=status.HTTP_200_OK)
         
         return Response({"detail":"조회 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+# 게시글 CUD
 class ArticleView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
@@ -183,3 +184,30 @@ class ArticleView(APIView):
             article.delete()
             return Response({'message': '삭제 완료!'}, status=status.HTTP_200_OK)       
         return Response({'message': '이 글을 작성한 사람이 아닙니다!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# TODO doLike / undoLike
+class ArticleLikeControllerView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def post(self, request, article_id):
+        '''
+        좋아요 등록
+        게시글 id , 로그인 유저 id
+        '''
+        user = UserModel.objects.get(id=request.user.id)
+        article = ArticleModel.objects.get(id=article_id)
+        ArticleLikeModel.objects.create(user=user, article=article)
+        return Response({'message': '좋아요 등록'}, status=status.HTTP_200_OK)
+
+    def delete(self, request, article_id):
+        '''
+        좋아요 삭제
+        게시글 id , 로그인 유저 id
+        '''
+        user = UserModel.objects.get(id=request.user.id)
+        article = ArticleModel.objects.get(id=article_id)
+        get_data = ArticleLikeModel.objects.get(user=user, article=article)
+        get_data.delete()
+        return Response({'message': '좋아요 삭제'}, status=status.HTTP_200_OK)    

@@ -3,10 +3,6 @@ from django.utils import timezone, dateformat
 
 from .models import Article as ArticleModel
 from .models import Comment as CommentModel
-from user.models import User as UserModel
-from user.models import UserInfo as UserInfoModel
-from user.models import ArticleLike as ArticleLikeModel
-from user.models import Planet as PlanetModel
 
 
 class CommentPostSerializer(serializers.ModelSerializer):
@@ -118,6 +114,15 @@ class ArticleSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
     comments_cnt = serializers.SerializerMethodField()
     author_name = serializers.SerializerMethodField()
+    likes_cnt = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+
+    def get_likes_cnt(self, obj):
+       return obj.articlelike_set.all().count()
+
+    def get_likes(self, obj):
+        queryset = obj.articlelike_set.all()
+        return [queryset[i].user_id for i in range(queryset.count())]
 
     def get_author_name(self, obj):
         return obj.author.nickname
@@ -148,6 +153,8 @@ class ArticleSerializer(serializers.ModelSerializer):
             "content",
             "picture_url",
             "create_date",
+            "likes_cnt",
+            "likes",
             "comments_cnt",
             "comments",
         ]
@@ -155,9 +162,10 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 class BoardSerialzer(serializers.ModelSerializer):
     create_date = serializers.SerializerMethodField()
-    comments = serializers.SerializerMethodField()
     detail_url = serializers.SerializerMethodField()
     author_name = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
 
     def get_author_name(self, obj):
         return obj.author.nickname
@@ -168,6 +176,10 @@ class BoardSerialzer(serializers.ModelSerializer):
     def get_comments(self, obj):
         comments = obj.comment_set.all()
         return comments.count()
+
+    def get_likes(self, obj):
+        likes = obj.articlelike_set.all()
+        return likes.count()
 
     def get_detail_url(self, obj):
         return f'article.html?board={obj.planet.id}&article={obj.id}'
@@ -183,4 +195,5 @@ class BoardSerialzer(serializers.ModelSerializer):
             "detail_url",
             "create_date",
             "comments",
+            "likes",
         ]
