@@ -74,3 +74,6 @@ class PlanetView(APIView):
         planet_serializer = PlanetSerializer(planets, many=True).data
         
         return Response(planet_serializer, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
