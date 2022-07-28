@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from user.models import User as UserModel
 from .models import Planet
+from .models import UserInfo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -43,3 +44,9 @@ class PlanetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Planet
         fields = ['name', 'max_floor', 'max_number', 'population', 'empty_rooms']
+
+
+class BasicUserInfoSerializer(serializers.Serializer):
+    class Meta:
+        model = UserInfo
+        fields = ['user', 'name', 'name_eng', 'birthday']
