@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views_board.BoardListView.as_view()), # 메인 페이지
 
     path('<int:planet_id>/', views_board.BoardView.as_view()), # 게시판 목록 get
+    path('<int:planet_id>/search/<str:keyword>/', views_board.BoardSearchView.as_view()), # 게시글 검색 get
     
     path('<int:planet_id>/<int:article_id>/', views_article.ArticleDetailView.as_view()), # 게시글 상세 get
 
