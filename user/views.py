@@ -12,6 +12,8 @@ from deeplearning.deeplearning_make_portrait import make_portrait
 from .serializers import PlanetSerializer
 from .models import Planet
 
+from datetime import datetime
+
 
 class UserView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -28,24 +30,29 @@ q = Queue()
 p = None
 class UserInfoView(APIView):
     def post(self, request):
-        
-        # global q, p
+        request.data['user'] = request.user.id
+        print(request.data)
+        print(datetime.now().strftime('%Y%m%d%H%M%S%f'))
+        global q, p
         
         # user_id = request.user.id
         # request.data['user'] = user_id
         
-        # pic = request.data.pop('pic')[0]
-        # filename = pic.name
+        pic = request.data.pop('portrait')[0]
+        filename = datetime.now().strftime('%Y%m%d%H%M%S%f') + pic.name
+        
+        s3 = boto3.client('s3')
+        s3.put_object(
+            ACL="public-read",
+            Bucket="wm-portrait",
+            Body=pic,
+            Key=filename,
+            ContentType=pic.content_type)
 
-        # s3 = boto3.client('s3')
-        # s3.put_object(
-        #     ACL="public-read",
-        #     Bucket="my-sparta",
-        #     Body=pic,
-        #     Key=filename,
-        #     ContentType=pic.content_type)
-
-        # url = f'https://my-sparta.s3.ap-northeast-2.amazonaws.com/{filename}'
+        url = f'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/{filename}'
+        # make_portrait(q, url, request.user.id)
+        p = Process(target=make_portrait, args=(q, url, request.user.id))
+        p.start()
         # request.data['pic'] = url
 
         # original_pic_serializer = OriginalPicSerializer(data=request.data)
