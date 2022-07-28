@@ -54,22 +54,11 @@ class UserInfoView(APIView):
             # s3에 저장 안 하고 바로 파일 자체를 읽어서 딥페이크를 적용할 수는 없을까
             # imageio로 파일 읽는 방법?
             url = f'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/{filename}'
-            # make_portrait(q, url, request.user.id)
+            
             p = Process(target=make_portrait, args=(q, url, request.user.id))
             p.start()
 
             return Response(status=status.HTTP_200_OK)
-        # request.data['pic'] = url
-
-        # original_pic_serializer = OriginalPicSerializer(data=request.data)
-
-        # if original_pic_serializer.is_valid():
-        #     original_pic_serializer.save()
-
-        #     p = Process(target=make_portrait, args=(q, url, user_id))
-        #     p.start()
-
-        #     return Response({'msg': 'send'}, status=status.HTTP_200_OK)
 
         return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
 
