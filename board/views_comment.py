@@ -1,26 +1,18 @@
-import django.urls
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
-from django.utils import timezone, dateformat
-import boto3
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import ArticleSerializer, CommentSerializer, BoardSerialzer
-from .serializers import ArticlePostSerializer, CommentPostSerializer
-from .models import Article as ArticleModel
+from .serializers import CommentPostSerializer
 from .models import Comment as CommentModel
-from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 from user.models import User as UserModel
-from user.models import UserInfo as UserInfoModel
 
 
 # 댓글 CRUD
 class CommentView(APIView): 
     permission_classes = [permissions.IsAuthenticated]
-
-    # def get(self, request, planet_id, article_id, ):
-    #     return Response({'message': 'get method!!'}, status=status.HTTP_200_OK)
+    authentication_classes = [JWTAuthentication]
         
     def post(self, request, planet_id, article_id):
         '''

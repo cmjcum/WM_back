@@ -1,23 +1,22 @@
-from re import A
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone, dateformat
 import boto3
 
-from .serializers import ArticleSerializer, CommentSerializer, BoardSerialzer
-from .serializers import ArticlePostSerializer, CommentPostSerializer
+from .serializers import ArticleSerializer
+from .serializers import ArticlePostSerializer
 from .models import Article as ArticleModel
-from .models import Comment as CommentModel
 from user.models import ArticleLike as ArticleLikeModel
 from user.models import Planet as PlanetModel
 from user.models import User as UserModel
-from user.models import UserInfo as UserInfoModel
 
 
 # 게시글 CRUD
 class ArticleDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, planet_id, article_id):
         '''
@@ -28,8 +27,7 @@ class ArticleDetailView(APIView):
         print(request.data)
 
         # 관리자일 때
-        user_is_admin = UserModel.objects.get(id=user).is_admin
-        if user_is_admin:
+        if user_data.is_admin:
             article = ArticleModel.objects.get(id=article_id)
             article_serializer = ArticleSerializer(article).data
             return Response(article_serializer, status=status.HTTP_200_OK)
@@ -57,6 +55,7 @@ class ArticleDetailView(APIView):
 
 class ArticleView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, planet_id, article_id):
         '''
@@ -78,8 +77,7 @@ class ArticleView(APIView):
         user_data = UserModel.objects.get(id=user)
 
         # 관리자일 때
-        user_is_admin = UserModel.objects.get(id=user).is_admin
-        if user_is_admin:
+        if user_data.is_admin:
             data = request.data.copy()
             data['author'] = user
             data['planet'] = planet_id
@@ -159,29 +157,17 @@ class ArticleView(APIView):
         '''
         user = request.user.id
 
-        # 소속 행성 조회를 위한 접근 가능 게시판 리스트
-        user_data = UserModel.objects.get(id=user)
-        solar = PlanetModel.objects.get(name="Solar").id
-        board_list = [solar]
+        article = ArticleModel.objects.get(id=article_id)
+        author = article.author.id
+        
+        if user == author: # 게시글 작성자가 맞는지 확인
+            article_serializer = ArticlePostSerializer(article, data=request.data, partial=True)
 
-        try: # userinfo 존재
-            my_planet = user_data.userinfo.planet.id
-            board_list.append(my_planet)
+            if article_serializer.is_valid():
+                article_serializer.save()
+                return Response(article_serializer.data, status=status.HTTP_200_OK) 
 
-        except: # userinfo 존재하지 않음
-            pass
-
-        if planet_id in board_list: # 게시판 이용 권한 확인
-            article = ArticleModel.objects.get(id=article_id)
-            
-            if user == article.author.id: # 게시글 작성자가 맞는지 확인
-                article_serializer = ArticlePostSerializer(article, data=request.data, partial=True)
-
-                if article_serializer.is_valid():
-                    article_serializer.save()
-                    return Response(article_serializer.data, status=status.HTTP_200_OK) 
-
-                return Response(article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"detail":"수정 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -192,7 +178,6 @@ class ArticleView(APIView):
         user = request.user.id
         article = ArticleModel.objects.get(id=article_id)
         author = article.author.id
-        print(user, author)
 
         if user == author: # 게시글 작성자가 맞는지 확인
             article.delete()

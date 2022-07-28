@@ -61,7 +61,7 @@ class ArticlePostSerializer(serializers.ModelSerializer):
 
         for key, value in validated_data.items():
             if key == 'content':
-                value = value + f'\r\n\r\n({formatted_date}에 마지막으로 수정됨)'
+                value = value + f'\r\n({formatted_date}에 마지막으로 수정됨)'
                 setattr(instance, key, value)
         instance.save()
         return instance
