@@ -82,6 +82,3 @@ class UserInfo(models.Model):
 class ArticleLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     article = models.ForeignKey("board.Article", on_delete=models.CASCADE)
-
-
-
