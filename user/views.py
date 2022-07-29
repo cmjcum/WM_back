@@ -43,7 +43,6 @@ class UserView(APIView):
 class UserInfoView(APIView):
     def post(self, request):
         global q, p
-        print(q.qsize())
 
         request.data['user'] = request.user.id
         pic = request.data.pop('portrait')[0]
@@ -103,6 +102,7 @@ class PlanetView(APIView):
 
     def post(self, request):
         global q
+
         data = request.data
 
         planet_name = data.pop('planet')
@@ -119,7 +119,6 @@ class PlanetView(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
-
 
         now = datetime.now()
         date = now.strftime('%m%d')
