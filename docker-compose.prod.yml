@@ -7,7 +7,7 @@ services:
       - static_volume:/usr/src/app/static
       - media_volume:/usr/src/app/media
     ports:
-       - 80:80
+      - 80:80
     depends_on:
       - web
   web:
@@ -26,22 +26,19 @@ services:
       - 8000
     depends_on:
       - db
-  mysql:
-    image: 'bitnami/mysql:5.7.38-debian-11-r7'
-    container_name: mysql
-    ports:
-      - 3306:3306
+  db:
+    image: postgres:14.4-alpine
     volumes:
-      - ./mysql:/bitnami/mysql/data
+      - postgres_db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_USER=/run/secrets/db_username
-      - MYSQL_PASSWORD_FILE=/run/secrets/db_password
-      - MYSQL_DATABASE=makemigrations
+      - POSTGRES_DB='makemigrations'
+      - POSTGRES_USER=/run/secrets/db_username
+      - POSTGRES_PASSWORD=/run/secrets/db_password
     secrets:
       - db_username
       - db_password
-    restart: always
 
 secrets:
   db_username:
@@ -50,9 +47,6 @@ secrets:
     file: db_password.txt
     
 volumes:
-  mysql_db:
+  postgres_db:
   static_volume:
   media_volume:
-
-
-  
