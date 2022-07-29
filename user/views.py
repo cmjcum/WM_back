@@ -19,6 +19,12 @@ from .serializers import PlanetLog
 from .models import PlanetLog
 
 
+q = Queue()
+p = None
+
+DEFAULT_COIN = 1000
+
+
 class UserView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -30,8 +36,7 @@ class UserView(APIView):
                 
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-q = Queue()
-p = None
+
 class UserInfoView(APIView):
     def post(self, request):
         global q, p
@@ -117,7 +122,7 @@ class PlanetView(APIView):
         date = now.strftime('%m%d')
         data['identification_number'] = f'{planet_id}{date}{request.user.id}'
         data['last_date'] = now.strftime('%Y-%m-%d')
-        data['coin'] = 100
+        data['coin'] = DEFAULT_COIN
 
         additional_user_info_serializer = AdditionalUserInfoSerializer(data=data)
         if additional_user_info_serializer.is_valid():
