@@ -101,7 +101,7 @@ class PlanetView(APIView):
         return Response(planet_serializer, status=status.HTTP_200_OK)
 
     def post(self, request):
-        global q
+        global p, q
 
         data = request.data
 
@@ -114,6 +114,7 @@ class PlanetView(APIView):
         if planet_log_serializer.is_valid():
             planet_log_serializer.save()
         else:
+            p.terminate()
             return Response(planet_log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         now = datetime.now()
@@ -130,5 +131,5 @@ class PlanetView(APIView):
             return Response(status=status.HTTP_200_OK)
 
         PlanetLog.objects.filter(planet=data['planet'], floor=data['floor'], room_number=data['room_number']).delete()
-
+        p.terminate()
         return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
