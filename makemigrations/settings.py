@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "somesecret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", 1))
 
-if os.environ.get('DJANGO_ALLOWED_HOSTS')
+if os.environ.get('DJANGO_ALLOWED_HOSTS'):
 	ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(' ')
 else:    
     ALLOWED_HOSTS = []
@@ -160,7 +160,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 # STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / ‘static’
-STATIC = ‘/static/’
+STATIC_URL = '/static/'
 
 MEDIA_ROOT = BASE_DIR / ‘media’
 MEDIA_URL = ‘/media/’
