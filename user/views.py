@@ -74,23 +74,23 @@ class UserInfoView(APIView):
 
 
 def save_user_info(data, q):
-        while q.qsize() < 2:
-            pass
+    while q.qsize() < 2:
+        pass
 
-        basic_info = q.get()
+    basic_info = q.get()
 
-        data['portrait'] = q.get()
+    data['portrait'] = q.get()
 
-        data['user'] = basic_info['user']
-        data['name'] = basic_info['name']
-        data['name_eng'] = basic_info['name_eng']
-        data['birthday'] = basic_info['birthday']
+    data['user'] = basic_info['user']
+    data['name'] = basic_info['name']
+    data['name_eng'] = basic_info['name_eng']
+    data['birthday'] = basic_info['birthday']
 
-        user_info_serializer = UserInfoSerializer(data=data)
-        if user_info_serializer.is_valid():
-            user_info_serializer.save()
-            
-        return
+    user_info_serializer = UserInfoSerializer(data=data)
+    if user_info_serializer.is_valid():
+        user_info_serializer.save()
+        
+    return
 
 
 class PlanetView(APIView):
