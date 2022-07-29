@@ -9,12 +9,14 @@ import boto3
 
 from deeplearning.deeplearning_make_portrait import make_portrait
 
-from .serializers import PlanetSerializer
+from .serializers import AdditionalUserInfoSerializer, PlanetLogSerializer, PlanetSerializer, UserInfoSerializer
 from .models import Planet
 
 from datetime import datetime
 
 from .serializers import BasicUserInfoSerializer
+from .serializers import PlanetLog
+from .models import PlanetLog
 
 
 class UserView(APIView):
@@ -33,6 +35,7 @@ p = None
 class UserInfoView(APIView):
     def post(self, request):
         global q, p
+        print(q.qsize())
 
         request.data['user'] = request.user.id
         pic = request.data.pop('portrait')[0]
@@ -63,6 +66,26 @@ class UserInfoView(APIView):
         return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+def save_user_info(data, q):
+        while q.qsize() < 2:
+            pass
+
+        basic_info = q.get()
+
+        data['portrait'] = q.get()
+
+        data['user'] = basic_info['user']
+        data['name'] = basic_info['name']
+        data['name_eng'] = basic_info['name_eng']
+        data['birthday'] = basic_info['birthday']
+
+        user_info_serializer = UserInfoSerializer(data=data)
+        if user_info_serializer.is_valid():
+            user_info_serializer.save()
+
+        return
+
+
 class PlanetView(APIView):
     def get(self, request):
         planets = Planet.objects.all()
@@ -71,4 +94,36 @@ class PlanetView(APIView):
         return Response(planet_serializer, status=status.HTTP_200_OK)
 
     def post(self, request):
+        global q
+        data = request.data
+
+        planet_name = data.pop('planet')
+        planet_id = Planet.objects.get(name=planet_name).id
+
+        planet_log = PlanetLog.objects.filter(planet=planet_id, floor=data['floor'], room_number=data['room_number'])
+        data['planet'] = planet_id
+        
+        if not planet_log:
+            planet_log_serializer = PlanetLogSerializer(data=data)
+            if planet_log_serializer.is_valid():
+                planet_log_serializer.save()
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+        now = datetime.now()
+        date = now.strftime('%m%d')
+        data['identification_number'] = f'{planet_id}{date}{request.user.id}'
+        data['last_date'] = now.strftime('%Y-%m-%d')
+        data['coin'] = 100
+
+        additional_user_info_serializer = AdditionalUserInfoSerializer(data=data)
+        if additional_user_info_serializer.is_valid():
+            planet_process = Process(target=save_user_info, args=(data, q))
+            planet_process.start()
+
+            return Response(status=status.HTTP_200_OK)
+
         return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
