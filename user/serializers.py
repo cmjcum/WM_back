@@ -75,7 +75,6 @@ class PlanetLogSerializer(serializers.ModelSerializer):
     def validate(self, data):
         floor = data.get('floor')
         room_number = data.get('room_number')
-        print(data)
 
         planet = data.get('planet')
         planet_id = planet.id
@@ -95,7 +94,7 @@ class PlanetLogSerializer(serializers.ModelSerializer):
         is_exist_planet_log = PlanetLog.objects.filter(planet__id=planet_id, floor=floor, room_number=room_number)
         is_empty_room = UserInfo.objects.filter(planet__id=planet_id, floor=floor, room_number=room_number)
 
-        if not is_exist_planet_log or not is_empty_room:
+        if is_exist_planet_log or is_empty_room:
             raise serializers.ValidationError(
                 detail={"error": "이미 다른 사람이 선택한 방입니다."}
             )
