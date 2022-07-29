@@ -89,7 +89,7 @@ def save_user_info(data, q):
         user_info_serializer = UserInfoSerializer(data=data)
         if user_info_serializer.is_valid():
             user_info_serializer.save()
-
+            
         return
 
 
@@ -108,17 +108,13 @@ class PlanetView(APIView):
         planet_name = data.pop('planet')
         planet_id = Planet.objects.get(name=planet_name).id
 
-        planet_log = PlanetLog.objects.filter(planet=planet_id, floor=data['floor'], room_number=data['room_number'])
         data['planet'] = planet_id
-        
-        if not planet_log:
-            planet_log_serializer = PlanetLogSerializer(data=data)
-            if planet_log_serializer.is_valid():
-                planet_log_serializer.save()
-            else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        planet_log_serializer = PlanetLogSerializer(data=data)
+        if planet_log_serializer.is_valid():
+            planet_log_serializer.save()
         else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(planet_log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         now = datetime.now()
         date = now.strftime('%m%d')
@@ -132,5 +128,7 @@ class PlanetView(APIView):
             planet_process.start()
 
             return Response(status=status.HTTP_200_OK)
+
+        PlanetLog.objects.filter(planet=data['planet'], floor=data['floor'], room_number=data['room_number']).delete()
 
         return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
