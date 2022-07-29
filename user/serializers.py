@@ -71,6 +71,37 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
 
 class PlanetLogSerializer(serializers.ModelSerializer):
+
+    def validate(self, data):
+        floor = data.get('floor')
+        room_number = data.get('room_number')
+        print(data)
+
+        planet = data.get('planet')
+        planet_id = planet.id
+        max_floor = planet.max_floor
+        max_number = planet.max_number
+
+        if floor > max_floor:
+            raise serializers.ValidationError(
+                     detail={"error": "층 수를 다시 선택해주세요"},
+                  )
+
+        if room_number > max_number:
+            raise serializers.ValidationError(
+                     detail={"error": "방 번호를 다시 선택해주세요."},
+                  )
+
+        is_exist_planet_log = PlanetLog.objects.filter(planet__id=planet_id, floor=floor, room_number=room_number)
+        is_empty_room = UserInfo.objects.filter(planet__id=planet_id, floor=floor, room_number=room_number)
+
+        if not is_exist_planet_log or not is_empty_room:
+            raise serializers.ValidationError(
+                detail={"error": "이미 다른 사람이 선택한 방입니다."}
+            )
+
+        return data
+
     class Meta:
         model = PlanetLog
         fields = ['planet', 'floor', 'room_number']
