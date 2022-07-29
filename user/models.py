@@ -4,6 +4,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class Planet(models.Model):
+    # 행성정보
     name = models.CharField("행성 이름", max_length=10)
     max_floor = models.IntegerField()
     max_number = models.IntegerField()
@@ -66,7 +67,7 @@ class User(AbstractBaseUser):
 class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     planet = models.ForeignKey(Planet, on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10 )
     name_eng = models.CharField(max_length=30)
     birthday = models.DateField()
     portrait = models.URLField()
