@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    working_dir: /usr/src/app/
+    env_file:
+      - ./.env.prod
+    volumes:
+      - ./:/usr/src/app/
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
+    expose:
+      - 8000
+    depends_on:
+      - db
+mysql:
+    image: 'bitnami/mysql:5.7.38-debian-11-r7'
+    container_name: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql:/bitnami/mysql/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=/run/secrets/db_username
+      - MYSQL_PASSWORD_FILE=/run/secrets/db_password
+      - MYSQL_DATABASE=makemigrations
+    secrets:
+      - db_password
+    restart: always
+
+secrets:
+  db_username:
+    file: db_username.txt
+  db_password:
+    file: db_password.txt
+
+
+
+  
