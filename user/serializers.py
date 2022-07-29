@@ -47,27 +47,27 @@ class PlanetSerializer(serializers.ModelSerializer):
         fields = ['name', 'max_floor', 'max_number', 'population', 'empty_rooms']
 
 
-class BasicUserInfoSerializer(serializers.Serializer):
+class BasicUserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = ['user', 'name', 'name_eng', 'birthday']
 
 
-class AdditionalUserInfoSerializer(serializers.Serializer):
+class AdditionalUserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = ['planet', 'identification_number', 'last_date', 'coin',
                 'floor', 'room_number']
 
 
-class UserInfoSerializer(serializers.Serializer):
+class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = ['user', 'planet', 'name', 'name_eng', 'birthday', 'portrait',
                 'floor', 'room_number', 'identification_number', 'coin', 'last_date']
 
 
-class PlanetLogSerializer(serializers.Serializer):
+class PlanetLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlanetLog
         fields = ['planet', 'floor', 'room_number']
