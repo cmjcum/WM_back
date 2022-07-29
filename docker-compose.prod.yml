@@ -26,7 +26,7 @@ services:
       - 8000
     depends_on:
       - db
-mysql:
+  mysql:
     image: 'bitnami/mysql:5.7.38-debian-11-r7'
     container_name: mysql
     ports:
@@ -39,6 +39,7 @@ mysql:
       - MYSQL_PASSWORD_FILE=/run/secrets/db_password
       - MYSQL_DATABASE=makemigrations
     secrets:
+      - db_username
       - db_password
     restart: always
 
@@ -49,7 +50,7 @@ secrets:
     file: db_password.txt
     
 volumes:
-  postgres_db:
+  mysql_db:
   static_volume:
   media_volume:
 
