@@ -29,6 +29,7 @@ class ArticleDetailView(APIView):
         if user_data.is_admin:
             article = ArticleModel.objects.get(id=article_id)
             article_serializer = ArticleSerializer(article).data
+            article_serializer["liked_this"] = bool(user in article_serializer["likes"])
             return Response(article_serializer, status=status.HTTP_200_OK)
 
         # 소속 행성 조회를 위한 접근 가능 게시판 리스트
@@ -45,7 +46,7 @@ class ArticleDetailView(APIView):
         if planet_id in board_list:
             article = ArticleModel.objects.get(id=article_id)
             article_serializer = ArticleSerializer(article).data
-            # print(user, article_serializer["likes"], bool(user in article_serializer["likes"]))
+            print(user, article_serializer["likes"], bool(user in article_serializer["likes"]))
             article_serializer["liked_this"] = bool(user in article_serializer["likes"])
 
             return Response(article_serializer, status=status.HTTP_200_OK)

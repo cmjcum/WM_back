@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone, dateformat
+from datetime import timedelta
 
 from .models import Article as ArticleModel
 from .models import Comment as CommentModel
@@ -166,6 +167,11 @@ class BoardSerialzer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
+    articles = serializers.SerializerMethodField()
+    newest = serializers.SerializerMethodField()
+
+    def get_newest(self, obj):
+        return bool(obj.create_date > (timezone.now() - timedelta(days=1)))
 
     def get_author_name(self, obj):
         return obj.author.nickname
@@ -176,6 +182,9 @@ class BoardSerialzer(serializers.ModelSerializer):
     def get_comments(self, obj):
         comments = obj.comment_set.all()
         return comments.count()
+
+    def get_articles(self, obj):
+        return ArticleModel.objects.filter(planet__id=obj.planet.id).count()
 
     def get_likes(self, obj):
         likes = obj.articlelike_set.all()
@@ -194,6 +203,8 @@ class BoardSerialzer(serializers.ModelSerializer):
             "title",
             "detail_url",
             "create_date",
+            "newest",
             "comments",
             "likes",
+            "articles",
         ]
