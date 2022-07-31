@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.utils import timezone, dateformat
 from datetime import timedelta
+from django.utils.timezone import localtime
 
 from .models import Article as ArticleModel
 from .models import Comment as CommentModel
@@ -78,7 +79,7 @@ class CommentSerializer(serializers.ModelSerializer):
         return obj.author.nickname
 
     def get_create_date(self, obj):
-        return dateformat.format(obj.create_date, 'y.m.d H:i:s')
+        return dateformat.format(localtime(obj.create_date), 'y.m.d H:i:s')
 
     def get_reply_cnt(self, obj):
         try:
@@ -132,7 +133,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         return obj.comment_set.all().count()
 
     def get_create_date(self, obj):
-        return dateformat.format(obj.create_date, 'y.m.d H:i:s')
+        return dateformat.format(localtime(obj.create_date), 'y.m.d H:i:s')
 
     def get_comments(self, obj):
         try:
@@ -177,7 +178,7 @@ class BoardSerialzer(serializers.ModelSerializer):
         return obj.author.nickname
 
     def get_create_date(self, obj):
-        return dateformat.format(obj.create_date, 'y.m.d')
+        return dateformat.format(localtime(obj.create_date), 'y.m.d')
 
     def get_comments(self, obj):
         comments = obj.comment_set.all()
