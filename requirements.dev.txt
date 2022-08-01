@@ -17,7 +17,7 @@ django-cors-headers==3.13.0
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.0
 dlib==19.24.0
-easydit==1.9
+easydict==1.9
 flatbuffers==1.12
 fsspec==2022.5.0
 gast==0.4.0
@@ -26,7 +26,7 @@ google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 grpcio==1.47.0
 gunicorn==20.1.0
-h5py==3.7.0
+h5py==3.2.1
 idna==3.3
 imageio==2.3.0
 importlib-metadata==4.12.0
@@ -36,7 +36,7 @@ kiwisolver==1.4.3
 libclang==14.0.1
 locket==1.0.0
 Markdown==3.3.7
-matplotlib==2.2.2
+matplotlib==3.5.1
 networkx==2.6.3
 numpy==1.21.6
 oauthlib==3.2.0
@@ -64,16 +64,14 @@ scikit-learn==0.19.2
 scipy==1.1.0
 six==1.16.0
 sqlparse==0.4.2
+termcolor==1.1.0
+toolz==0.11.2
+tensorflow==2.9.0
+tensorflow-estimator==2.9.0
+tensorflow-io-gcs-filesystem==0.26.0
 tensorboard==2.9.1
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.1
-tensorflow==2.9.1
-tensorflow-estimator==2.9.0
-tensorflow-io-gcs-filesystem==0.26.0
-termcolor==1.1.0
-toolz==0.11.2
-torch==1.12.0
-torchvision==0.13.0
 tqdm==4.24.0
 typing_extensions==4.3.0
 urllib3==1.26.9
@@ -81,5 +79,4 @@ Werkzeug==2.1.2
 wincertstore==0.2
 wrapt==1.14.1
 zipp==3.8.0
-gunicorn==20.1.0
 tzdata==2022.1
