@@ -20,6 +20,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('user/', include('user.urls')),
-    # path('board/', include('board.urls')),
+    path('board/', include('board.urls')),
     path('myroom/', include('myroom.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

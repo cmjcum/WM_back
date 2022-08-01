@@ -82,3 +82,9 @@ class UserInfo(models.Model):
 class ArticleLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     article = models.ForeignKey("board.Article", on_delete=models.CASCADE)
+
+
+class PlanetLog(models.Model):
+    planet = models.ForeignKey(Planet, on_delete=models.CASCADE)
+    floor = models.IntegerField()
+    room_number = models.IntegerField()
