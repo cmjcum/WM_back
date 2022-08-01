@@ -12,8 +12,12 @@ from user.models import Planet as PlanetModel
 class CommentSerializer(serializers.ModelSerializer):
     create_date = serializers.SerializerMethodField()
     author = serializers.SlugRelatedField(queryset=UserModel.objects.all(), slug_field='nickname')
+    author_id = serializers.SerializerMethodField()
     article = serializers.SlugRelatedField(queryset=ArticleModel.objects.all(), slug_field='title')
     reply = serializers.SerializerMethodField()
+
+    def get_author_id(self, obj):
+        return obj.author.id
 
     def get_create_date(self, obj):
         try:
@@ -60,6 +64,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "article",
             "parent",
             "author",
+            "author_id",
             "content",
             "create_date",
             "reply",
@@ -69,6 +74,11 @@ class CommentSerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     create_date = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
+    author = serializers.SlugRelatedField(queryset=UserModel.objects.all(), slug_field='nickname')
+    author_id = serializers.SerializerMethodField()
+
+    def get_author_id(self, obj):
+        return obj.author.id
 
     def get_create_date(self, obj):
         try:
@@ -114,6 +124,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "id",
             "planet",
             "author",
+            "author_id",
             "title",
             "content",
             "picture_url",
@@ -126,7 +137,11 @@ class BoardSerialzer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(queryset=UserModel.objects.all(), slug_field='nickname')
     create_date = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
-    url = serializers.SerializerMethodField()
+    detail_url = serializers.SerializerMethodField()
+    author_id = serializers.SerializerMethodField()
+
+    def get_author_id(self, obj):
+        return obj.author.id
 
     def get_create_date(self, obj):
         return dateformat.format(obj.create_date, 'y.m.d')
@@ -135,8 +150,8 @@ class BoardSerialzer(serializers.ModelSerializer):
         comments = obj.comment_set.all()
         return comments.count()
 
-    def get_url(self, obj):
-        return f'/board/{obj.planet.id}/{obj.id}/'
+    def get_detail_url(self, obj):
+        return f'article.html?board={obj.planet.id}?article={obj.id}'
 
 
     class Meta:
@@ -145,8 +160,9 @@ class BoardSerialzer(serializers.ModelSerializer):
             "id",
             # "planet",
             "author",
+            "author_id",
             "title",
-            "url",
+            "detail_url",
             "create_date",
             "comments",
         ]
