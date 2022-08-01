@@ -2,23 +2,82 @@ from rest_framework import serializers
 
 from myroom.models import GuestBook as GuestBookModel
 from user.models import UserInfo as UserInfoModel
+from user.models import User as UserModel
+from user.models import Planet as PlanetModel
 
-from django.utils import timezone, dateformat
+from django.utils import dateformat
 
 from myroom.models import Furniture as FurnitureModel
 from myroom.models import MyFurniture as MyFurnitureModel
 from myroom.models import FurniturePosition as FurniturePositionModel
 from user.models import UserManager as UserManagerModel
 from user.models import ArticleLike as ArticleLikeModel
-from user.models import Planet as PlanetModel
-from user.models import User as UserModel
+
+
+# class SimpleUserInfoModelSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = UserInfoModel
+#         fields = ["portrait"]
+
+
+class SimpleUserModelSerializer(serializers.ModelSerializer):
+    follow_user_nickname = serializers.SerializerMethodField(source="nickname")
+    portrait = serializers.SerializerMethodField()
+
+    def get_follow_user_nickname(self, obj):
+        return obj.nickname
+
+    def get_portrait(self, obj):
+        return obj.userinfo.portrait
+
+    class Meta:
+        model = UserModel
+        fields = ["follow_user_nickname", "id", "portrait"]
+
+
+class UserModelSerializer(serializers.ModelSerializer):
+    like_count = serializers.SerializerMethodField()
+    follower_count = serializers.SerializerMethodField()
+    follow_count = serializers.SerializerMethodField()
+    follow = SimpleUserModelSerializer(many=True)
+
+    def get_like_count(self, obj):
+        like_count = obj.like.count()
+        return like_count
+
+    def get_follower_count(self, obj):
+        follower_count = obj.follow.count()
+        return follower_count
+
+    def get_follow_count(self, obj):
+        follow_count = obj.follow_users.count()
+        return follow_count
+
+    class Meta:
+        model = UserModel
+        fields = ["like", "follow", "like_count",
+                    "follower_count", "follow_count", "nickname"]
+
+
+class PlanetModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlanetModel
+        fields = ["name"]
 
 
 class UserInfoModelSerializer(serializers.ModelSerializer):
+    birthday = serializers.SerializerMethodField()
+    user = UserModelSerializer()
+    planet = PlanetModelSerializer()
+
+    def get_birthday(self, obj):
+        return dateformat.format(obj.birthday, 'm.d')
 
     class Meta:
         model = UserInfoModel
-        fields = ["name", "birthday", "portrait", "coin"]
+        fields = ["name", "birthday", "portrait", "coin", "user_id",
+                    "user", "floor", "room_number", "planet"]
 
 
 class RoomDataSerializer(serializers.ModelSerializer):
@@ -35,6 +94,11 @@ class PostGuestBookModelSerializer(serializers.ModelSerializer):
 
 class GetGuestBookModelSerializer(serializers.ModelSerializer):
     nickname = serializers.SerializerMethodField(read_only=True)
+    create_date = serializers.SerializerMethodField()
+
+    def get_create_date(self, obj):
+        return dateformat.format(obj.create_date, 'y.m.d')
+
     def get_nickname(self, obj):
         return obj.author.nickname
 

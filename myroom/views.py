@@ -16,20 +16,31 @@ from .models import FurniturePosition
 from .seriailzers import MyFurnitureSerializer
 from .seriailzers import FurniturePositionSerializer
 
-from myroom.seriailzers import RoomDataSerializer
-
 
 class UserInfoView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     # DONE 로그인한 user의 정보
     def get(self, request, owner_id):
+        user_id = request.user.id
+        # print(user)
         # UserInfoModel에서 user id 와 owner id 가 같은 것을 filter 해준다.
         user = UserInfoModel.objects.filter(user_id=owner_id)
-
         # UserInfoModelSerializer 의 정보를 변수에 담아 Response 해준다.
-        profile_data = UserInfoModelSerializer(user, many=True).data
-        return Response(profile_data, status=status.HTTP_200_OK)
+        profile = UserInfoModelSerializer(user, many=True)
+
+        # boolean 코드
+        if request.user:
+            like_data = profile.data[0]["user"]
+            like_user_id = profile.data[0]["user"]["like"]
+
+            follow_data = profile.data[0]["user"]
+            follow_user_id = [x['id'] for x in profile.data[0]["user"]["follow"]]
+            # print(follow_user_id)
+            
+            follow_data["follow_user"] = bool(user_id in follow_user_id)
+            like_data["like_user"] = bool(user_id in like_user_id)
+            return Response(profile.data, status=status.HTTP_200_OK)
 
 
 class GuestBookView(APIView):
@@ -38,7 +49,7 @@ class GuestBookView(APIView):
     # DONE 방명록 조회
     def get(self, request, owner_id):
         # __ 는 참조하고 있는 테이블의 필드를 가져온다.(__연결고리)
-        guest_book = GuestBookModel.objects.filter(owner_id=owner_id)
+        guest_book = GuestBookModel.objects.filter(owner_id=owner_id).order_by('-create_date')
         # GetGuestBookModelSerializer 의 값을 변수에 넣는다.
         serializer_guest_book = GetGuestBookModelSerializer(guest_book, many=True).data
         
@@ -77,17 +88,18 @@ class LikeUserModelView(APIView):
 
     def post(self, request, owner_id):
         # 로그인한 유저라면
-        if request.user:
+        user = request.user 
+        if user:
             # UserModel에서 id 값이 owner_id 인게 있으면 값을 가져오고 아니면 404에러
-            like_data = get_object_or_404(UserModel, id=owner_id)
+            owner = get_object_or_404(UserModel, id=owner_id)
+            print(owner.like)
             # article 안에 pk가 있다면 id를 찾는다.
-            if like_data.like.filter(pk=request.user.id).exists():
+            if owner.like.filter(id=request.user.id).exists():
                 # pk 값을 remove()를 통해 지워준다.
-                like_data.like.remove(request.user)
+                owner.like.remove(request.user)
                 return Response({'message': '좋아요 삭제!'})
             else:
-                # article 안에 user를 추가해준다.
-                like_data.like.add(request.user)
+                owner.like.add(request.user)
                 return Response({'message': '좋아요 추가!'})
 
 
@@ -98,7 +110,7 @@ class FollowUserModelView(APIView):
     def post(self, request, owner_id):
         if request.user:
             follow_data = get_object_or_404(UserModel, id=owner_id)
-            if follow_data.follow.filter(pk=request.user.id).exists():
+            if follow_data.follow.filter(id=request.user.id).exists():
                 follow_data.follow.remove(request.user)
                 return Response({'message': '팔로우 삭제!'})
             else:
