@@ -1,14 +1,23 @@
 version: "3.8"
 
 services:
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
+    ports:
+      - 80:80
+    depends_on:
+      - web
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn makemigrations.wsgi:application --bind 0.0.0.0:8000
     ports:
       - 8000:8000
     working_dir: /usr/src/app/
     env_file:
-      - ./.env.dev
+      - ./.env.prod
     volumes:
       - ./:/usr/src/app/
       - static_volume:/usr/src/app/static
@@ -18,27 +27,15 @@ services:
     depends_on:
       - db
   db:
-    image: 'bitnami/mysql:5.7.38-debian-11-r7'
-    container_name: mysql
-    ports:
-      - 3306:3306
+    image: postgres:14.4-alpine
     volumes:
-      - ./mysql:/bitnami/mysql/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_USER=/run/secrets/db_username
-      - MYSQL_PASSWORD_FILE=/run/secrets/db_password
-      - MYSQL_DATABASE=makemigrations
-    secrets:
-      - db_password
-    restart: always
+      - postgres_db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env.postgres.prod
 
-secrets:
-  db_username:
-    file: db_username.txt
-  db_password:
-    file: db_password.txt
-
-
-
-  
+volumes:
+  postgres_db:
+  static_volume:
+  media_volume:
