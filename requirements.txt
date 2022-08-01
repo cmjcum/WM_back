@@ -11,8 +11,8 @@ Django==3.2.13
 django-cors-headers==3.13.0
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.0
-dlib @ file:///D:/bld/dlib_1652035402968/work
-easydit==1.9
+# dlib @ file:///D:/bld/dlib_1652035402968/work
+easydict==1.9
 flatbuffers==1.12
 fsspec==2022.5.0
 gast==0.4.0
@@ -32,7 +32,7 @@ locket==1.0.0
 Markdown==3.3.7
 matplotlib==2.2.2
 networkx==2.6.3
-numpy @ file:///D:/bld/numpy_1649806536290/work
+# numpy @ file:///D:/bld/numpy_1649806536290/work
 oauthlib==3.2.0
 opencv-python==4.6.0.66
 opt-einsum==3.3.0
