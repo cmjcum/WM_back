@@ -1,6 +1,8 @@
 absl-py==1.1.0
 asgiref==3.5.2
 astunparse==1.6.3
+boto3==1.24.42
+botocore==1.27.42
 cachetools==5.2.0
 certifi==2022.6.15
 charset-normalizer==2.1.0
@@ -11,7 +13,7 @@ Django==3.2.13
 django-cors-headers==3.13.0
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.0
-# dlib @ file:///D:/bld/dlib_1652035402968/work
+dlib @ file:///D:/bld/dlib_1652035402968/work
 easydict==1.9
 flatbuffers==1.12
 fsspec==2022.5.0
@@ -24,6 +26,7 @@ h5py==3.7.0
 idna==3.3
 imageio==2.3.0
 importlib-metadata==4.12.0
+jmespath==1.0.1
 keras==2.9.0
 Keras-Preprocessing==1.1.2
 kiwisolver==1.4.3
@@ -32,7 +35,7 @@ locket==1.0.0
 Markdown==3.3.7
 matplotlib==2.2.2
 networkx==2.6.3
-# numpy @ file:///D:/bld/numpy_1649806536290/work
+numpy @ file:///D:/bld/numpy_1649806536290/work
 oauthlib==3.2.0
 opencv-python==4.6.0.66
 opt-einsum==3.3.0
@@ -52,6 +55,7 @@ PyYAML==5.4.1
 requests==2.28.1
 requests-oauthlib==1.3.1
 rsa==4.8
+s3transfer==0.6.0
 scikit-image==0.14.2
 scikit-learn==0.19.2
 scipy==1.1.0
@@ -74,6 +78,3 @@ Werkzeug==2.1.2
 wincertstore==0.2
 wrapt==1.14.1
 zipp==3.8.0
-backports.zoneinfo==0.2.1
-gunicorn==20.1.0
-tzdata==2022.1
