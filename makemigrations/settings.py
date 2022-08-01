@@ -38,7 +38,7 @@ else:
 AUTH_USER_MODEL = "user.User"
 
 # 한국 시간 설정
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
 TIME_ZONE = 'Asia/Seoul'  # 한국 시간 적용 
 
@@ -149,14 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 # STATIC_URL = '/static/'
@@ -189,7 +181,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
 		# Access 토큰 유효 시간 설정하기
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=660),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
 		# Refresh 토큰 유효 시간 설정하기
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 

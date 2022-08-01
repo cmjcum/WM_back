@@ -7,19 +7,6 @@ from user.models import Planet as PlanetModel
 
 from django.utils import dateformat
 
-from myroom.models import Furniture as FurnitureModel
-from myroom.models import MyFurniture as MyFurnitureModel
-from myroom.models import FurniturePosition as FurniturePositionModel
-from user.models import UserManager as UserManagerModel
-from user.models import ArticleLike as ArticleLikeModel
-
-
-# class SimpleUserInfoModelSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = UserInfoModel
-#         fields = ["portrait"]
-
 
 class SimpleUserModelSerializer(serializers.ModelSerializer):
     follow_user_nickname = serializers.SerializerMethodField(source="nickname")

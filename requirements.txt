@@ -17,7 +17,7 @@ django-cors-headers==3.13.0
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.0
 dlib==19.24.0
-easydit==1.9
+easydict==1.9
 flatbuffers==1.12
 fsspec==2022.5.0
 gast==0.4.0
