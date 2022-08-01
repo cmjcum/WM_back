@@ -1,8 +1,4 @@
-FROM python:3.7
-
-# 바로 수정할 수 있게 vim 설치
-RUN apt-get -y update
-RUN apt-get -y install vim
+FROM python:3.7-alpine
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
