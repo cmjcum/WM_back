@@ -62,9 +62,13 @@ class BoardView(APIView):
         '''
         게시글 목록을 조회합니다.
 
-        필요한 정보
-        - 글 제목, 작성자, 작성일자, 코멘트 개수, pk(혹은 디테일 페이지 링크?)
+        퍼미션 만들기
+        planet_id == 8 > true
+        planet_id == request.user.userinfo.planet_id > true
+        request.user.is_admin > true
         '''
+        print(request.user.is_admin)
+
         if page == 1:
             start_num = page
             end_num = page *20
@@ -80,8 +84,13 @@ class BoardView(APIView):
         
         articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')[start_num-1:end_num]
         article_serializer = BoardSerialzer(articles, many=True).data
+
+        if len(article_serializer) == 0:
+            return Response({"message": "작성된 글이 없어요!"}, status=status.HTTP_200_OK)
+
         article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)] # 출력할 넘버링
         return Response(article_serializer, status=status.HTTP_200_OK)
+        # return Response({"message": "게시판 열람 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BoardSearchView(APIView):
