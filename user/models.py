@@ -4,6 +4,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class Planet(models.Model):
+    # 행성정보
     name = models.CharField("행성 이름", max_length=10)
     max_floor = models.IntegerField()
     max_number = models.IntegerField()
@@ -37,8 +38,8 @@ class User(AbstractBaseUser):
     username = models.CharField("사용자 이름", max_length=20, unique=True)
     nickname = models.CharField("닉네임", max_length=20, unique=True)
     password = models.CharField("비밀번호", max_length=128)
-    follow = models.ManyToManyField("self", blank=True)
-    like = models.ManyToManyField("self", blank=True)
+    follow = models.ManyToManyField("self", symmetrical=False, related_name='follow_users' ,blank=True)
+    like = models.ManyToManyField("self", symmetrical=False, related_name='like_users' ,blank=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -66,7 +67,7 @@ class User(AbstractBaseUser):
 class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     planet = models.ForeignKey(Planet, on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10 )
     name_eng = models.CharField(max_length=30)
     birthday = models.DateField()
     portrait = models.URLField()
@@ -83,4 +84,8 @@ class ArticleLike(models.Model):
     article = models.ForeignKey("board.Article", on_delete=models.CASCADE)
 
 
+class PlanetLog(models.Model):
+    planet = models.ForeignKey(Planet, on_delete=models.CASCADE)
+    floor = models.IntegerField()
+    room_number = models.IntegerField()
 
