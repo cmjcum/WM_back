@@ -88,4 +88,3 @@ class PlanetLog(models.Model):
     planet = models.ForeignKey(Planet, on_delete=models.CASCADE)
     floor = models.IntegerField()
     room_number = models.IntegerField()
-
