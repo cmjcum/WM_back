@@ -4,6 +4,7 @@ from rest_framework import permissions, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import Q
 
+from makemigrations.permissions import IsAdminOrSolarOrMypanet
 from .serializers import BoardSerialzer
 from .models import Article as ArticleModel
 from user.models import Planet as PlanetModel
@@ -31,7 +32,7 @@ class BoardListView(APIView):
 
         try:
             my_planet = user_data.userinfo.planet
-            url = f'board.html?board={my_planet.id}&page=1'
+            url = f'/board/board.html?board={my_planet.id}&page=1'
             name = my_planet.name
             id = my_planet.id
             planet_data = [name, id, url]
@@ -44,7 +45,7 @@ class BoardListView(APIView):
             all_planets = PlanetModel.objects.all()
             for planet in all_planets:
                 name = planet.name
-                url = f'board.html?board={planet.id}&page=1'
+                url = f'/board/board.html?board={planet.id}&page=1'
                 if name == 'Solar':
                     pass
                 else:
@@ -68,6 +69,7 @@ class BoardView(APIView):
         request.user.is_admin > true
         '''
         print(request.user.is_admin)
+        is_admin = request.user.is_admin
 
         if page == 1:
             start_num = page
@@ -76,7 +78,8 @@ class BoardView(APIView):
         else:
             start_num = (page-1) *20 +1
             end_num = page *20
-            cnt = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date').count()
+
+            cnt = ArticleModel.objects.filter(planet__id=planet_id).count()
             if cnt < end_num:
                 end_num = start_num + (cnt-start_num)
                 
@@ -90,7 +93,6 @@ class BoardView(APIView):
 
         article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)] # 출력할 넘버링
         return Response(article_serializer, status=status.HTTP_200_OK)
-        # return Response({"message": "게시판 열람 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BoardSearchView(APIView):
