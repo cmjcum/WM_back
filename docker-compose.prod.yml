@@ -32,20 +32,9 @@ services:
       - postgres_db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_DB='makemigrations'
-      - POSTGRES_USER=/run/secrets/db_username
-      - POSTGRES_PASSWORD=/run/secrets/db_password
-    secrets:
-      - db_username
-      - db_password
+    env_file:
+      - ./.env.postgres.prod
 
-secrets:
-  db_username:
-    file: db_username.txt
-  db_password:
-    file: db_password.txt
-    
 volumes:
   postgres_db:
   static_volume:
