@@ -4,7 +4,6 @@ from rest_framework import permissions, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import Q
 
-from makemigrations.permissions import IsAdminOrSolarOrMypanet
 from .serializers import BoardSerialzer
 from .models import Article as ArticleModel
 from user.models import Planet as PlanetModel
