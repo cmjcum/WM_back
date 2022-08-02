@@ -8,7 +8,6 @@ from rest_framework import permissions, status
 from user.serializers import UserSerializer
 
 from multiprocessing import Process, Queue
-import boto3
 
 from deeplearning.deeplearning_make_portrait import make_portrait
 
@@ -22,6 +21,8 @@ from .serializers import PlanetLog
 from .models import PlanetLog
 
 from makemigrations.permissions import HasNoUserInfoUser
+
+import imageio
 
 
 q = Queue()
@@ -49,27 +50,13 @@ class UserInfoView(APIView):
         global q, p
 
         request.data['user'] = request.user.id
-        pic = request.data.pop('portrait')[0]
+        pic = imageio.imread(request.data.pop('portrait')[0])
 
         basic_user_info_serializer = BasicUserInfoSerializer(data=request.data)
         if basic_user_info_serializer.is_valid():
             q.put(request.data)
-        
-            filename = datetime.now().strftime('%Y%m%d%H%M%S%f') + pic.name
-        
-            s3 = boto3.client('s3')
-            s3.put_object(
-                ACL="public-read",
-                Bucket="wm-portrait",
-                Body=pic,
-                Key=filename,
-                ContentType=pic.content_type)
-
-            # s3에 저장 안 하고 바로 파일 자체를 읽어서 딥페이크를 적용할 수는 없을까
-            # imageio로 파일 읽는 방법?
-            url = f'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/{filename}'
             
-            p = Process(target=make_portrait, args=(q, url, request.user.id))
+            p = Process(target=make_portrait, args=(q, pic, request.user.id))
             p.start()
 
             return Response(status=status.HTTP_200_OK)
