@@ -23,21 +23,6 @@ class FollowUserModelSerializer(serializers.ModelSerializer):
         fields = ["follower_user_nickname", "id", "portrait"]
 
 
-class FollowerModelSerializer(serializers.ModelSerializer):
-    follow_user_nickname = serializers.SerializerMethodField(source="nickname")
-    portrait = serializers.SerializerMethodField()
-
-    def get_follow_user_nickname(self, obj):
-        return obj.nickname
-
-    def get_portrait(self, obj):
-        return obj.userinfo.portrait
-
-    class Meta:
-        model = UserModel
-        fields = ["follow_user_nickname", "id", "portrait"]
-
-
 class LikeUserModelSerializer(serializers.ModelSerializer):
     like_user_nickname = serializers.SerializerMethodField(source="like")
     portrait = serializers.SerializerMethodField()
