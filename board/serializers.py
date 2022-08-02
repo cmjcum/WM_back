@@ -5,6 +5,7 @@ from datetime import timedelta
 from .models import Article as ArticleModel
 from .models import Comment as CommentModel
 from user.models import User as UserModel
+from user.models import UserInfo as UserInfoModel
 
 
 class CommentPostSerializer(serializers.ModelSerializer):
@@ -77,11 +78,9 @@ class CommentSerializer(serializers.ModelSerializer):
     moved = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
-        try:
-            my_planet = UserModel.objects.get(id=obj.author.id).userinfo.planet
+        if UserInfoModel.objects.filter(id=obj.author.id):
             return True
-        except:
-            return False
+        return False
 
     def get_author_name(self, obj):
         return obj.author.nickname
@@ -130,11 +129,9 @@ class ArticleSerializer(serializers.ModelSerializer):
     moved = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
-        try:
-            my_planet = UserModel.objects.get(id=obj.author.id).userinfo.planet
+        if UserInfoModel.objects.filter(id=obj.author.id):
             return True
-        except:
-            return False
+        return False  
 
     def get_likes_cnt(self, obj):
        return obj.articlelike_set.all().count()
@@ -186,16 +183,13 @@ class BoardSerialzer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
-    articles = serializers.SerializerMethodField()
     newest = serializers.SerializerMethodField()
     moved = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
-        try:
-            my_planet = UserModel.objects.get(id=obj.author.id).userinfo.planet
+        if UserInfoModel.objects.filter(id=obj.author.id):
             return True
-        except:
-            return False
+        return False
 
     def get_newest(self, obj):
         return bool(obj.create_date > (timezone.now() - timedelta(days=1)))
@@ -209,9 +203,6 @@ class BoardSerialzer(serializers.ModelSerializer):
     def get_comments(self, obj):
         comments = obj.comment_set.all()
         return comments.count()
-
-    def get_articles(self, obj):
-        return ArticleModel.objects.filter(planet__id=obj.planet.id).count()
 
     def get_likes(self, obj):
         likes = obj.articlelike_set.all()
@@ -233,6 +224,5 @@ class BoardSerialzer(serializers.ModelSerializer):
             "newest",
             "comments",
             "likes",
-            "articles",
             "moved",
         ]
