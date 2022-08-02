@@ -1,3 +1,4 @@
+import django.urls
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -8,6 +9,23 @@ from .serializers import BoardSerialzer
 from .models import Article as ArticleModel
 from user.models import Planet as PlanetModel
 from user.models import User as UserModel
+from user.models import UserInfo as UserInfoModel
+
+def is_okay(request, planet_id):
+    user = request.user
+
+    if user.is_authenticated:
+
+        if user.is_admin:
+            return True
+    
+        if planet_id == PlanetModel.objects.get(name="Solar").id:
+            return True
+        
+        if planet_id == UserInfoModel.objects.get(id=user.id).planet.id:
+            return True
+
+    return False
 
 
 class BoardListView(APIView):
@@ -29,15 +47,13 @@ class BoardListView(APIView):
         my_data["user_id"] = user
         my_data["nickname"] = user_data.nickname
 
-        try:
+        if UserInfoModel.objects.filter(user__id=user):
             my_planet = user_data.userinfo.planet
             url = f'/board/board.html?board={my_planet.id}&page=1'
             name = my_planet.name
             id = my_planet.id
             planet_data = [name, id, url]
             my_data["planet_data"] = planet_data
-        except:
-            pass
 
         if user_data.is_admin:
             admin_data = {}
@@ -61,85 +77,79 @@ class BoardView(APIView):
     def get(self, request, planet_id, page):
         '''
         게시글 목록을 조회합니다.
-
-        퍼미션 만들기
-        planet_id == 8 > true
-        planet_id == request.user.userinfo.planet_id > true
-        request.user.is_admin > true
         '''
-        print(request.user.is_admin)
-        is_admin = request.user.is_admin
-
-        if page == 1:
-            start_num = page
-            end_num = page *20
-
-        else:
-            start_num = (page-1) *20 +1
-            end_num = page *20
+        
+        if is_okay(request, planet_id):
 
             cnt = ArticleModel.objects.filter(planet__id=planet_id).count()
+
+            if cnt == 0:
+                return Response({"message": "작성된 글이 없어요!"}, status=status.HTTP_200_OK)
+
+            if page == 1:
+                start_num = page
+                end_num = page *20
+
+            else:
+                start_num = (page-1) *20 +1
+                end_num = page *20
+
             if cnt < end_num:
                 end_num = start_num + (cnt-start_num)
-                
-        # print(start_num, end_num)
-        
-        articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')[start_num-1:end_num]
-        article_serializer = BoardSerialzer(articles, many=True).data
+                                
+            articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')[start_num-1:end_num]
+            article_serializer = BoardSerialzer(articles, many=True).data
+            article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)] # 출력할 넘버링
+            article_serializer[0]["count"] = cnt # 검색 결과 개수
 
-        if len(article_serializer) == 0:
-            return Response({"message": "작성된 글이 없어요!"}, status=status.HTTP_200_OK)
+            return Response(article_serializer, status=status.HTTP_200_OK)
 
-        article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)] # 출력할 넘버링
-        return Response(article_serializer, status=status.HTTP_200_OK)
+        return Response({"detail": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class BoardSearchView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request, planet_id, keyword):
+    def get(self, request, planet_id, keyword, page):
         '''
         게시글을 검색합니다.
         검색범위: 제목+내용+작성자
         '''
-        user = request.user.id
-        user_data = UserModel.objects.get(id=user)
 
-        #관리자일 때
-        if user_data.is_admin:
-            articles = ArticleModel.objects.filter(Q(planet__id=planet_id) & Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword)).order_by('-create_date')
+        if is_okay(request, planet_id):
+
+            cnt = ArticleModel.objects.filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword) \
+                    & Q(planet__id=planet_id)).count()
+            if cnt == 0:
+                return Response({"message": "작성된 글이 없어요!"}, status=status.HTTP_200_OK)
+            
+            if page == 1:
+                start_num = page
+                end_num = page *20
+
+            else:
+                start_num = (page-1) *20 +1
+                end_num = page *20
+
+
+            if cnt < end_num:
+                end_num = start_num + (cnt-start_num)
+                                
+            articles = ArticleModel.objects.filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword) \
+                & Q(planet__id=planet_id)).order_by('-create_date')[start_num-1:end_num]
             article_serializer = BoardSerialzer(articles, many=True).data
-            return Response(article_serializer, status=status.HTTP_200_OK)
-
-        # 소속 행성 조회를 위한 접근 가능 게시판 리스트
-        solar = PlanetModel.objects.get(name="Solar").id
-        board_list = [solar]
-
-        user_is_admin = UserModel.objects.get(id=user).is_admin
-        # print(user_is_admin)
-        if user_is_admin:
-            articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')
-            article_serializer = BoardSerialzer(articles, many=True).data
-
-            return Response(article_serializer, status=status.HTTP_200_OK)
-
-        try: # userinfo 존재
-            my_planet = user_data.userinfo.planet.id
-            board_list.append(my_planet)
-
-        except: # userinfo 존재하지 않음
-            pass
-
-        if planet_id in board_list:
-            articles = ArticleModel.objects.filter(Q(planet__id=planet_id) & Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword)).order_by('-create_date')
-            article_serializer = BoardSerialzer(articles, many=True).data
-            # print(len(article_serializer))
-            if len(article_serializer) == 0:
-                return Response({"message": "검색 결과가 없습니다."}, status=status.HTTP_200_OK)
+            article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)] # 출력할 넘버링
+            article_serializer[0]["count"] = cnt # 검색 결과 개수
 
             return Response(article_serializer, status=status.HTTP_200_OK)
 
-        # print(article_serializer.errors)
-        return Response(article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+
+
     
