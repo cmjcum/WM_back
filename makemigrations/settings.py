@@ -114,7 +114,6 @@ DATABASES = {
 
 
 # Database settings
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': os.environ.get('SQL_ENGINE'),
