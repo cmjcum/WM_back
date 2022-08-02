@@ -11,10 +11,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class FollowUserModelSerializer(serializers.ModelSerializer):
-    follow_user_nickname = serializers.SerializerMethodField(source="nickname")
+    follower_user_nickname = serializers.SerializerMethodField(source="nickname")
     portrait = serializers.SerializerMethodField()
 
-    def get_follow_user_nickname(self, obj):
+    def get_follower_user_nickname(self, obj):
         return obj.nickname
 
     def get_portrait(self, obj):
@@ -26,7 +26,7 @@ class FollowUserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ["follow_user_nickname", "id", "portrait"]
+        fields = ["follower_user_nickname", "id", "portrait"]
 
 
 class LikeUserModelSerializer(serializers.ModelSerializer):
@@ -50,11 +50,11 @@ class LikeUserModelSerializer(serializers.ModelSerializer):
 
 class UserModelSerializer(serializers.ModelSerializer):
     like_count = serializers.SerializerMethodField()
-    follower_count = serializers.SerializerMethodField()
     follow_count = serializers.SerializerMethodField()
+    follower_count = serializers.SerializerMethodField()
     follow = FollowUserModelSerializer(many=True)
-    # like = LikeUserModelSerializer(many=True)
-
+    follow_users = FollowUserModelSerializer(many=True)
+    like = LikeUserModelSerializer(many=True)
 
     def get_like_count(self, obj):
         like_count = obj.like.count()
@@ -70,8 +70,8 @@ class UserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ["like", "follow", "like_count",
-                    "follower_count", "follow_count", "nickname"]
+        fields = ["like", "follow", "follow_users", "follower_count",
+                    "follow_count", "like_count", "nickname"]
 
 
 class PlanetModelSerializer(serializers.ModelSerializer):
