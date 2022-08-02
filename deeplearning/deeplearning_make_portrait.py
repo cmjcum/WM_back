@@ -18,8 +18,6 @@ from .modules.keypoint_detector import KPDetector
 from .animate import normalize_kp
 from scipy.spatial import ConvexHull
 
-import cv2
-
 import easydict
 
 import random
