@@ -65,7 +65,7 @@ class User(AbstractBaseUser):
 
 
 class UserInfo(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
     planet = models.ForeignKey(Planet, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=10 )
     name_eng = models.CharField(max_length=30)
@@ -76,7 +76,7 @@ class UserInfo(models.Model):
     identification_number = models.IntegerField()
     create_date = models.DateField(auto_now_add=True)
     coin = models.IntegerField()
-    last_date = models.DateField()
+    last_date = models.DateField(auto_now=True)
 
 
 class ArticleLike(models.Model):
