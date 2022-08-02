@@ -17,8 +17,12 @@ from .models import Planet
 
 from datetime import datetime
 
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .serializers import BasicUserInfoSerializer
 from .serializers import PlanetLog
+from user.jwt_claim_serializer import CustomTokenObtainPairSerializer
+
 from .models import PlanetLog
 
 from makemigrations.permissions import HasNoUserInfoUser
@@ -28,6 +32,9 @@ q = Queue()
 p = None
 
 DEFAULT_COIN = 1000
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 class UserView(APIView):
