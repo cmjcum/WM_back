@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 import os, sys
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 import yaml
 from argparse import ArgumentParser
 from tqdm import tqdm
