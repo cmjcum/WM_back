@@ -48,7 +48,7 @@ class BoardListView(APIView):
         my_data["nickname"] = user_data.nickname
 
         if UserInfoModel.objects.filter(user__id=user):
-            my_planet = user_data.userinfo.planet
+            my_planet = UserInfoModel.objects.get(user__id=user).planet
             url = f'/board/board.html?board={my_planet.id}&page=1'
             name = my_planet.name
             id = my_planet.id
