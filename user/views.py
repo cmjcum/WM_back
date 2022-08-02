@@ -4,26 +4,21 @@ django.setup()
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions, status
+from rest_framework_simplejwt.views import TokenObtainPairView
 
+from .serializers import AdditionalUserInfoSerializer, PlanetLogSerializer, PlanetSerializer, UserInfoSerializer
+from .serializers import BasicUserInfoSerializer
+from .serializers import PlanetLog
 from user.serializers import UserSerializer
+from user.jwt_claim_serializer import CustomTokenObtainPairSerializer
 
+from .models import Planet, PlanetLog
+
+from deeplearning.deeplearning_make_portrait import make_portrait
 from multiprocessing import Process, Queue
 import boto3
 
-from deeplearning.deeplearning_make_portrait import make_portrait
-
-from .serializers import AdditionalUserInfoSerializer, PlanetLogSerializer, PlanetSerializer, UserInfoSerializer
-from .models import Planet
-
 from datetime import datetime
-
-from rest_framework_simplejwt.views import TokenObtainPairView
-
-from .serializers import BasicUserInfoSerializer
-from .serializers import PlanetLog
-from user.jwt_claim_serializer import CustomTokenObtainPairSerializer
-
-from .models import PlanetLog
 
 from makemigrations.permissions import HasNoUserInfoUser
 
@@ -32,6 +27,7 @@ q = Queue()
 p = None
 
 DEFAULT_COIN = 1000
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
