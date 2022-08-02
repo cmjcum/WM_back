@@ -1,4 +1,3 @@
-import face_alignment
 import skimage.io
 import numpy
 from argparse import ArgumentParser

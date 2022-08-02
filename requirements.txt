@@ -16,11 +16,11 @@ easydict==1.9
 fsspec==2022.5.0
 gunicorn==20.1.0
 imageio==2.3.0
+jmespath==1.0.1
 kiwisolver==1.4.3
 locket==1.0.0
 matplotlib==3.5.1
 networkx==2.6.3
-opencv-python==4.6.0.66
 pandas==0.23.4
 partd==1.2.0
 Pillow==6.2.2

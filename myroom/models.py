@@ -10,10 +10,12 @@ class Furniture(models.Model):
     url_right = models.URLField()
     price = models.IntegerField()
 
+
 # 나의 가구
 class MyFurniture(models.Model):
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
     furniture = models.ForeignKey(Furniture, on_delete=models.CASCADE)
+
 
 # 가구 위치
 class FurniturePosition(models.Model):

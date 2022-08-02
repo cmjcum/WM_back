@@ -83,9 +83,13 @@ class ArticleLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     article = models.ForeignKey("board.Article", on_delete=models.CASCADE)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "article"], name="unique_user_article"),
+        ]
+
 
 class PlanetLog(models.Model):
     planet = models.ForeignKey(Planet, on_delete=models.CASCADE)
     floor = models.IntegerField()
     room_number = models.IntegerField()
-

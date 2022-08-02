@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 import os, sys
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 import yaml
 from argparse import ArgumentParser
 from tqdm import tqdm
@@ -16,8 +17,6 @@ from .modules.generator import OcclusionAwareGenerator
 from .modules.keypoint_detector import KPDetector
 from .animate import normalize_kp
 from scipy.spatial import ConvexHull
-
-import cv2
 
 import easydict
 

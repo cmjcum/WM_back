@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -36,7 +36,6 @@ class UserInfoView(APIView):
 
             follow_data = profile.data[0]["user"]
             follow_user_id = [x['id'] for x in profile.data[0]["user"]["follow"]]
-            # print(follow_user_id)
             
             follow_data["follow_user"] = bool(user_id in follow_user_id)
             like_data["like_user"] = bool(user_id in like_user_id)

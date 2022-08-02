@@ -21,6 +21,8 @@ from .serializers import BasicUserInfoSerializer
 from .serializers import PlanetLog
 from .models import PlanetLog
 
+from makemigrations.permissions import HasNoUserInfoUser
+
 
 q = Queue()
 p = None
@@ -41,6 +43,8 @@ class UserView(APIView):
 
 
 class UserInfoView(APIView):
+    permission_classes = [HasNoUserInfoUser]
+    
     def post(self, request):
         global q, p
 
@@ -94,6 +98,8 @@ def save_user_info(data, q):
 
 
 class PlanetView(APIView):
+    permission_classes = [HasNoUserInfoUser]
+
     def get(self, request):
         planets = Planet.objects.all()
         planet_serializer = PlanetSerializer(planets, many=True).data

@@ -7,21 +7,8 @@ from user.models import Planet as PlanetModel
 
 from django.utils import dateformat
 
-from myroom.models import Furniture as FurnitureModel
-from myroom.models import MyFurniture as MyFurnitureModel
-from myroom.models import FurniturePosition as FurniturePositionModel
-from user.models import UserManager as UserManagerModel
-from user.models import ArticleLike as ArticleLikeModel
 
-
-# class SimpleUserInfoModelSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = UserInfoModel
-#         fields = ["portrait"]
-
-
-class SimpleUserModelSerializer(serializers.ModelSerializer):
+class FollowUserModelSerializer(serializers.ModelSerializer):
     follow_user_nickname = serializers.SerializerMethodField(source="nickname")
     portrait = serializers.SerializerMethodField()
 
@@ -36,11 +23,28 @@ class SimpleUserModelSerializer(serializers.ModelSerializer):
         fields = ["follow_user_nickname", "id", "portrait"]
 
 
+class LikeUserModelSerializer(serializers.ModelSerializer):
+    like_user_nickname = serializers.SerializerMethodField(source="like")
+    portrait = serializers.SerializerMethodField()
+
+    def get_like_user_nickname(self, obj):
+        return obj.nickname
+
+    def get_portrait(self, obj):
+        return obj.userinfo.portrait
+
+    class Meta:
+        model = UserModel
+        fields = ["like_user_nickname", "id", "portrait"]
+
+
 class UserModelSerializer(serializers.ModelSerializer):
     like_count = serializers.SerializerMethodField()
     follower_count = serializers.SerializerMethodField()
     follow_count = serializers.SerializerMethodField()
-    follow = SimpleUserModelSerializer(many=True)
+    follow = FollowUserModelSerializer(many=True)
+    # like = LikeUserModelSerializer(many=True)
+
 
     def get_like_count(self, obj):
         like_count = obj.like.count()

@@ -38,7 +38,7 @@ else:
 AUTH_USER_MODEL = "user.User"
 
 # 한국 시간 설정
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
 TIME_ZONE = 'Asia/Seoul'  # 한국 시간 적용 
 
@@ -105,25 +105,25 @@ WSGI_APPLICATION = 'makemigrations.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Database settings
-DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get('SQL_ENGINE',"django.db.backends.sqlite3"),
-        'NAME': os.environ.get('SQL_DATABASE', BASE_DIR / "db.sqlite3"),
-        'USER': os.environ.get('SQL_USER', 'user'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD', 'password'),
-        'HOST': os.environ.get('SQL_HOST', 'localhost'),
-        'PORT': os.environ.get('SQL_PORT', '5432'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.environ.get('SQL_ENGINE'),
+#         'NAME': os.environ.get('SQL_DATABASE'),
+#         'USER': os.environ.get('SQL_USER'),
+#         'PASSWORD': os.environ.get('SQL_PASSWORD'),
+#         'HOST': os.environ.get('SQL_HOST'),
+#         'PORT': os.environ.get('SQL_PORT'),
+#     }
+# }
 
 
 # Password validation
@@ -147,14 +147,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
-
-
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -189,7 +181,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
 		# Access 토큰 유효 시간 설정하기
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=660),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
 		# Refresh 토큰 유효 시간 설정하기
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 
