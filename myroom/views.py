@@ -32,7 +32,7 @@ class UserInfoView(APIView):
         # boolean 코드
         if request.user:
             like_data = profile.data[0]["user"]
-            like_user_id = profile.data[0]["user"]["like"]
+            like_user_id = [x['id'] for x in profile.data[0]["user"]["like"]]
 
             follow_data = profile.data[0]["user"]
             follow_user_id = [x['id'] for x in profile.data[0]["user"]["follow"]]
@@ -91,7 +91,6 @@ class LikeUserModelView(APIView):
         if user:
             # UserModel에서 id 값이 owner_id 인게 있으면 값을 가져오고 아니면 404에러
             owner = get_object_or_404(UserModel, id=owner_id)
-            print(owner.like)
             # article 안에 pk가 있다면 id를 찾는다.
             if owner.like.filter(id=request.user.id).exists():
                 # pk 값을 remove()를 통해 지워준다.
