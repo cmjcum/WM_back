@@ -22,7 +22,7 @@ def is_okay(request, planet_id):
         if planet_id == PlanetModel.objects.get(name="Solar").id:
             return True
         
-        if planet_id == UserInfoModel.objects.get(id=user.id).planet.id:
+        if planet_id == UserInfoModel.objects.get(user__id=user.id).planet.id:
             return True
 
     return False
@@ -48,7 +48,7 @@ class BoardListView(APIView):
         my_data["nickname"] = user_data.nickname
 
         if UserInfoModel.objects.filter(user__id=user):
-            my_planet = UserInfoModel.objects.get(user__id=user).planet
+            my_planet = user_data.userprofile.planet
             url = f'/board/board.html?board={my_planet.id}&page=1'
             name = my_planet.name
             id = my_planet.id
