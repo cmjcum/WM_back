@@ -9,6 +9,21 @@ from django.utils import dateformat
 
 
 class FollowUserModelSerializer(serializers.ModelSerializer):
+    follower_user_nickname = serializers.SerializerMethodField(source="nickname")
+    portrait = serializers.SerializerMethodField()
+
+    def get_follower_user_nickname(self, obj):
+        return obj.nickname
+
+    def get_portrait(self, obj):
+        return obj.userinfo.portrait
+
+    class Meta:
+        model = UserModel
+        fields = ["follower_user_nickname", "id", "portrait"]
+
+
+class FollowerModelSerializer(serializers.ModelSerializer):
     follow_user_nickname = serializers.SerializerMethodField(source="nickname")
     portrait = serializers.SerializerMethodField()
 
@@ -40,11 +55,11 @@ class LikeUserModelSerializer(serializers.ModelSerializer):
 
 class UserModelSerializer(serializers.ModelSerializer):
     like_count = serializers.SerializerMethodField()
-    follower_count = serializers.SerializerMethodField()
     follow_count = serializers.SerializerMethodField()
+    follower_count = serializers.SerializerMethodField()
     follow = FollowUserModelSerializer(many=True)
-    # like = LikeUserModelSerializer(many=True)
-
+    follow_users = FollowUserModelSerializer(many=True)
+    like = LikeUserModelSerializer(many=True)
 
     def get_like_count(self, obj):
         like_count = obj.like.count()
@@ -60,8 +75,8 @@ class UserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ["like", "follow", "like_count",
-                    "follower_count", "follow_count", "nickname"]
+        fields = ["like", "follow", "follow_users", "follower_count",
+                    "follow_count", "like_count", "nickname"]
 
 
 class PlanetModelSerializer(serializers.ModelSerializer):
