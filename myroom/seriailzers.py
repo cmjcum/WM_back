@@ -19,7 +19,7 @@ class FollowUserModelSerializer(serializers.ModelSerializer):
 
     def get_portrait(self, obj):
         try:
-            portrait = obj.userinfo.portrait
+            portrait = obj.userprofile.portrait
         except ObjectDoesNotExist:
             portrait = 'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/logo/logo_ver2.png'
         return portrait
@@ -38,7 +38,7 @@ class LikeUserModelSerializer(serializers.ModelSerializer):
 
     def get_portrait(self, obj):
         try:
-            portrait = obj.userinfo.portrait
+            portrait = obj.userprofile.portrait
         except ObjectDoesNotExist:
             portrait = 'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/logo/logo_ver2.png'
         return portrait
