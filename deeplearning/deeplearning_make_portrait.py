@@ -79,7 +79,7 @@ def make_animation(source_image, driving_video, generator, kp_detector, relative
     return predictions
 
 
-def make_portrait(q, img_path, user_id):
+def make_portrait(q, img, user_id):
     opt = easydict.EasyDict({
         'config': 'deeplearning/config/vox-256.yaml',
         'checkpoint': 'vox-cpk.pth.tar',
@@ -92,7 +92,7 @@ def make_portrait(q, img_path, user_id):
         'find_best_frame': False
     })
     
-    source_image = imageio.imread(img_path)
+    source_image = img
 
     rand = random.randrange(1, 5)
     video_path = f'deeplearning/original_video/{rand}.mp4'
