@@ -29,7 +29,7 @@
 ### API
 <a href="https://www.notion.so/typingmylife/MakeMigrations-API-88de2c1a1ccd457c9059c8b55ee3dc70">노션 페이지로 이동(☞ﾟヮﾟ)☞</a>
 ### ERD
-![image](https://user-images.githubusercontent.com/71905164/182563922-072544d4-133c-44ce-bd65-5b66df5cb65d.png)
+![make migrations (6)](https://user-images.githubusercontent.com/71905164/182602214-7d8cf839-76d6-4d30-af03-99d5f9481137.png)
 ***
 # 🌠Credit
 * 프로젝트에 사용된 모든 가구 벡터는 <a href='https://kr.freepik.com/author/macrovector'>macrovector - kr.freepik.com가 제작함</a>
