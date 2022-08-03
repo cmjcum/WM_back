@@ -26,6 +26,8 @@
 ![image](https://user-images.githubusercontent.com/71905164/182590042-5e0a0293-3342-4719-9569-1d40c86cefb2.png)
 ![image](https://user-images.githubusercontent.com/71905164/182590138-e5478b04-a8ab-44ed-b27d-08ef377376fd.png)
 ![image](https://user-images.githubusercontent.com/71905164/182590378-26928dd6-946e-426d-b42a-044b80203395.png)
+### S.A
+<a href="https://cold-charcoal.tistory.com/118">블로그로 이동(☞ﾟヮﾟ)☞</a>
 ***
 # 🌠Credit
 * 프로젝트에 사용된 모든 가구 벡터는 <a href='https://kr.freepik.com/author/macrovector'>macrovector - kr.freepik.com가 제작함</a>
