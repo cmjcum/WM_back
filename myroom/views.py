@@ -166,9 +166,16 @@ class ShopView(APIView):
 
     def post(self, request):
         request.data['user'] = request.user.id
+
+        user_info = UserInfoModel.objects.get(id=request.user.userprofile.id)
+        price = Furniture.objects.get(id=request.data['furniture']).price
+        if user_info.coin < price:
+            return Response({'error': '코인이 부족합니다!'}, status=status.HTTP_200_OK)
         
         my_furniture_serializer = MyFurnitureSerializer(data=request.data)
         if my_furniture_serializer.is_valid():
+            user_info.coin -= price
+            user_info.save()
             my_furniture_serializer.save()
             return Response(status=status.HTTP_200_OK)
 
