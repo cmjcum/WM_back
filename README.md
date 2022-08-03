@@ -27,7 +27,7 @@
 ### Architecture
 ![image](https://user-images.githubusercontent.com/71905164/182599471-7262271c-a5b7-4379-8460-0a9b933a51dc.png)
 ### API
-<a href="https://www.notion.so/typingmylife/MakeMigrations-API-88de2c1a1ccd457c9059c8b55ee3dc70">노션 페이지로 이동(☞ﾟヮﾟ)☞</a>
+<a href="https://typingmylife.notion.site/MakeMigrations-API-88de2c1a1ccd457c9059c8b55ee3dc70">노션 페이지로 이동(☞ﾟヮﾟ)☞</a>
 ### ERD
 ![make migrations (6)](https://user-images.githubusercontent.com/71905164/182602214-7d8cf839-76d6-4d30-af03-99d5f9481137.png)
 ***
