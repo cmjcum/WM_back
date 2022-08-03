@@ -92,7 +92,7 @@ class UserInfoModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserInfoModel
-        fields = ["name", "birthday", "portrait", "coin", "user_id",
+        fields = ["name", "name_eng", "birthday", "portrait", "coin", "user_id",
                     "user", "floor", "room_number", "planet", "identification_number"]
 
 
