@@ -6,21 +6,10 @@ services:
     volumes:
       - static_volume:/usr/src/app/static
       - media_volume:/usr/src/app/media
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
     ports:
       - 80:80
-      - 443:443
-
     depends_on:
       - web
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-
   web:
     build: .
     command: gunicorn makemigrations.wsgi:application --bind 0.0.0.0:8000
@@ -43,8 +32,19 @@ services:
       - postgres_db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    env_file:
-      - ./.env.postgres.prod
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=/run/secrets/db_username
+      - MYSQL_PASSWORD=/run/secrets/db_password
+      - MYSQL_DATABASE=/run/secrets/db_name
+
+secrets:
+  db_username:
+    file: db_username.txt  
+  db_password:
+    file: db_password.txt
+  db_name:
+    file: db_name.txt
 
 volumes:
   postgres_db:
