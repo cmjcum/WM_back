@@ -151,3 +151,10 @@ class FurniturePositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FurniturePosition
         fields = ['user', 'myfurniture', 'pos_x', 'pos_y', 'is_left', 'myfurniture_url']
+
+
+class ShopSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Furniture
+        fields = ['id', 'name', 'url_left', 'price']

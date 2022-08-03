@@ -10,11 +10,13 @@ from myroom.seriailzers import GetGuestBookModelSerializer
 from myroom.models import GuestBook as GuestBookModel
 from user.models import UserInfo as UserInfoModel
 from user.models import User as UserModel
+from .models import Furniture
 
 from .models import MyFurniture
 from .models import FurniturePosition
 from .seriailzers import MyFurnitureSerializer
 from .seriailzers import FurniturePositionSerializer
+from .seriailzers import ShopSerializer
 
 
 class UserInfoView(APIView):
@@ -151,3 +153,13 @@ class MyRoomView(APIView):
         furniture_position_list = FurniturePosition.objects.filter(user=owner_id)
         furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
         return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)
+
+
+class ShopView(APIView):
+    def get(self, request):
+
+        my_furniture_id_list = [ mf.furniture.id for mf in MyFurniture.objects.filter(user=request.user) ]
+        furnitures = Furniture.objects.exclude(id__in=my_furniture_id_list)
+        shop_serializer = ShopSerializer(furnitures, many=True).data
+
+        return Response(shop_serializer, status=status.HTTP_200_OK)
