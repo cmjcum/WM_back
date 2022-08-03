@@ -1,15 +1,15 @@
 from rest_framework import serializers
+from django.utils import dateformat
+from django.core.exceptions import ObjectDoesNotExist
+from django.forms import model_to_dict
 
 from myroom.models import GuestBook as GuestBookModel
 from user.models import UserInfo as UserInfoModel
 from user.models import User as UserModel
 from user.models import Planet as PlanetModel
-
-from django.utils import dateformat
-
-from django.core.exceptions import ObjectDoesNotExist
-
-from django.forms import model_to_dict
+from .models import Furniture
+from .models import MyFurniture
+from .models import FurniturePosition
 
 
 class FollowUserModelSerializer(serializers.ModelSerializer):
@@ -122,11 +122,6 @@ class GetGuestBookModelSerializer(serializers.ModelSerializer):
         model = GuestBookModel
         fields = ["content", "create_date", "nickname", "id", "author_id"]
 
-
-# ////////////////////////////////////////////////////////////////////////
-from .models import Furniture
-from .models import MyFurniture
-from .models import FurniturePosition
 
 class FurnitureSerializer(serializers.ModelSerializer):
     class Meta:

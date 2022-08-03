@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils import timezone, dateformat
+
 import boto3
 
 from .serializers import ArticleSerializer
@@ -30,7 +31,6 @@ def is_okay(request, planet_id):
     return False
 
 
-# 게시글 R
 class ArticleDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
@@ -50,7 +50,6 @@ class ArticleDetailView(APIView):
         return Response({"detail":"조회 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 게시글 CUD
 class ArticleView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
@@ -63,7 +62,7 @@ class ArticleView(APIView):
             user = request.user.id
             article = ArticleModel.objects.get(id=article_id)
 
-            if user == article.author.id: # 게시글 작성자가 맞는지 확인
+            if user == article.author.id:
                 article_serializer = ArticleSerializer(article).data
                 return Response(article_serializer, status=status.HTTP_200_OK)
 
@@ -118,7 +117,7 @@ class ArticleView(APIView):
             article = ArticleModel.objects.get(id=article_id)
             author = article.author.id
             
-            if user == author: # 게시글 작성자가 맞는지 확인
+            if user == author:
                 article_serializer = ArticlePostSerializer(article, data=request.data, partial=True)
 
                 if article_serializer.is_valid():
@@ -139,7 +138,7 @@ class ArticleView(APIView):
             article = ArticleModel.objects.get(id=article_id)
             author = article.author.id
 
-            if user == author: # 게시글 작성자가 맞는지 확인
+            if user == author:
                 article.delete()
                 return Response({'message': '삭제 완료!'}, status=status.HTTP_200_OK)       
 
@@ -148,7 +147,6 @@ class ArticleView(APIView):
         return Response({"detail":"권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)     
 
 
-# TODO doLike / undoLike
 class ArticleLikeControllerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]

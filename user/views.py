@@ -6,6 +6,10 @@ from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from datetime import datetime
+from multiprocessing import Process, Queue
+import imageio
+
 from .serializers import AdditionalUserInfoSerializer, PlanetLogSerializer, PlanetSerializer, UserInfoSerializer
 from .serializers import BasicUserInfoSerializer
 from .serializers import PlanetLog
@@ -14,14 +18,8 @@ from user.jwt_claim_serializer import CustomTokenObtainPairSerializer
 
 from .models import Planet, PlanetLog
 
-from deeplearning.deeplearning_make_portrait import make_portrait
-from multiprocessing import Process, Queue
-
-from datetime import datetime
-
 from makemigrations.permissions import HasNoUserInfoUser
-
-import imageio
+from deeplearning.deeplearning_make_portrait import make_portrait
 
 
 q = Queue()
