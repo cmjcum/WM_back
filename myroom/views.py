@@ -16,7 +16,7 @@ from .models import MyFurniture
 from .models import FurniturePosition
 from .seriailzers import MyFurnitureSerializer
 from .seriailzers import FurniturePositionSerializer
-from .seriailzers import ShopSerializer
+from .seriailzers import FurnitureSerializer
 
 
 class UserInfoView(APIView):
@@ -160,7 +160,7 @@ class ShopView(APIView):
 
         my_furniture_id_list = [ mf.furniture.id for mf in MyFurniture.objects.filter(user=request.user) ]
         furnitures = Furniture.objects.exclude(id__in=my_furniture_id_list)
-        shop_serializer = ShopSerializer(furnitures, many=True).data
+        shop_serializer = FurnitureSerializer(furnitures, many=True).data
 
         return Response(shop_serializer, status=status.HTTP_200_OK)
 
