@@ -133,11 +133,24 @@ class FurnitureSerializer(serializers.ModelSerializer):
 
 
 class MyFurnitureSerializer(serializers.ModelSerializer):
-    furniture = FurnitureSerializer()
+
+    def validate(self, data):
+        user = data.get('user')
+        furniture = data.get('furniture')
+        is_exist = MyFurniture.objects.filter(user=user, furniture=furniture)
+
+        if is_exist:
+            raise serializers.ValidationError(
+                     detail={"error": "이미 보유하고 있는 가구입니다."},
+                  )
+
+        return data
+
+    furniture_info = FurnitureSerializer(read_only=True)
 
     class Meta:
         model = MyFurniture
-        fields = ['id', 'user', 'furniture']
+        fields = ['id', 'user', 'furniture', 'furniture_info']
 
 
 class FurniturePositionSerializer(serializers.ModelSerializer):
