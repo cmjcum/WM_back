@@ -24,7 +24,7 @@ def is_okay(request, planet_id):
         if planet_id == PlanetModel.objects.get(name="Solar").id:
             return True
         
-        if planet_id == UserInfoModel.objects.get(id=user.id).planet.id:
+        if planet_id == UserInfoModel.objects.get(user__id=user.id).planet.id:
             return True
 
     return False

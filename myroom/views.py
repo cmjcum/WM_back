@@ -10,11 +10,13 @@ from myroom.seriailzers import GetGuestBookModelSerializer
 from myroom.models import GuestBook as GuestBookModel
 from user.models import UserInfo as UserInfoModel
 from user.models import User as UserModel
+from .models import Furniture
 
 from .models import MyFurniture
 from .models import FurniturePosition
 from .seriailzers import MyFurnitureSerializer
 from .seriailzers import FurniturePositionSerializer
+from .seriailzers import ShopSerializer
 
 
 class UserInfoView(APIView):
@@ -151,3 +153,30 @@ class MyRoomView(APIView):
         furniture_position_list = FurniturePosition.objects.filter(user=owner_id)
         furniture_position_serializer = FurniturePositionSerializer(furniture_position_list, many=True).data
         return Response({'furniture_positions': furniture_position_serializer}, status=status.HTTP_200_OK)
+
+
+class ShopView(APIView):
+    def get(self, request):
+
+        my_furniture_id_list = [ mf.furniture.id for mf in MyFurniture.objects.filter(user=request.user) ]
+        furnitures = Furniture.objects.exclude(id__in=my_furniture_id_list)
+        shop_serializer = ShopSerializer(furnitures, many=True).data
+
+        return Response(shop_serializer, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        request.data['user'] = request.user.id
+
+        user_info = UserInfoModel.objects.get(id=request.user.userprofile.id)
+        price = Furniture.objects.get(id=request.data['furniture']).price
+        if user_info.coin < price:
+            return Response({'msg': '코인이 부족합니다!'}, status=status.HTTP_200_OK)
+        
+        my_furniture_serializer = MyFurnitureSerializer(data=request.data)
+        if my_furniture_serializer.is_valid():
+            user_info.coin -= price
+            user_info.save()
+            my_furniture_serializer.save()
+            return Response({'msg': '구매 완료!'}, status=status.HTTP_200_OK)
+
+        return Response(my_furniture_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

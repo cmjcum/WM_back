@@ -9,6 +9,8 @@ from django.utils import dateformat
 
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.forms import model_to_dict
+
 
 class FollowUserModelSerializer(serializers.ModelSerializer):
     follower_user_nickname = serializers.SerializerMethodField(source="nickname")
@@ -133,11 +135,27 @@ class FurnitureSerializer(serializers.ModelSerializer):
 
 
 class MyFurnitureSerializer(serializers.ModelSerializer):
-    furniture = FurnitureSerializer()
+
+    furniture_info = serializers.SerializerMethodField(read_only=True)
+
+    def get_furniture_info(self, obj):
+        return model_to_dict(obj.furniture)
+
+    def validate(self, data):
+        user = data.get('user')
+        furniture = data.get('furniture')
+        is_exist = MyFurniture.objects.filter(user=user, furniture=furniture)
+
+        if is_exist:
+            raise serializers.ValidationError(
+                     detail={"error": "이미 보유하고 있는 가구입니다."},
+                  )
+
+        return data
 
     class Meta:
         model = MyFurniture
-        fields = ['id', 'user', 'furniture']
+        fields = ['id', 'user', 'furniture', 'furniture_info']
 
 
 class FurniturePositionSerializer(serializers.ModelSerializer):
@@ -151,3 +169,10 @@ class FurniturePositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FurniturePosition
         fields = ['user', 'myfurniture', 'pos_x', 'pos_y', 'is_left', 'myfurniture_url']
+
+
+class ShopSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Furniture
+        fields = ['id', 'name', 'url_left', 'price']

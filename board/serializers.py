@@ -78,7 +78,7 @@ class CommentSerializer(serializers.ModelSerializer):
     moved = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
-        if UserInfoModel.objects.filter(id=obj.author.id):
+        if UserInfoModel.objects.filter(user__id=obj.author.id):
             return True
         return False
 
@@ -129,7 +129,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     moved = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
-        if UserInfoModel.objects.filter(id=obj.author.id):
+        if UserInfoModel.objects.filter(user__id=obj.author.id):
             return True
         return False  
 
@@ -187,7 +187,7 @@ class BoardSerialzer(serializers.ModelSerializer):
     moved = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
-        if UserInfoModel.objects.filter(id=obj.author.id):
+        if UserInfoModel.objects.filter(user__id=obj.author.id):
             return True
         return False
 
