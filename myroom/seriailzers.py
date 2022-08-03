@@ -9,6 +9,8 @@ from django.utils import dateformat
 
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.forms import model_to_dict
+
 
 class FollowUserModelSerializer(serializers.ModelSerializer):
     follower_user_nickname = serializers.SerializerMethodField(source="nickname")
@@ -134,6 +136,11 @@ class FurnitureSerializer(serializers.ModelSerializer):
 
 class MyFurnitureSerializer(serializers.ModelSerializer):
 
+    furniture_info = serializers.SerializerMethodField(read_only=True)
+
+    def get_furniture_info(self, obj):
+        return model_to_dict(obj.furniture)
+
     def validate(self, data):
         user = data.get('user')
         furniture = data.get('furniture')
@@ -145,8 +152,6 @@ class MyFurnitureSerializer(serializers.ModelSerializer):
                   )
 
         return data
-
-    furniture_info = FurnitureSerializer(read_only=True)
 
     class Meta:
         model = MyFurniture
