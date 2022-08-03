@@ -163,3 +163,13 @@ class ShopView(APIView):
         shop_serializer = ShopSerializer(furnitures, many=True).data
 
         return Response(shop_serializer, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        request.data['user'] = request.user.id
+        
+        my_furniture_serializer = MyFurnitureSerializer(data=request.data)
+        if my_furniture_serializer.is_valid():
+            my_furniture_serializer.save()
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
