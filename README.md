@@ -30,6 +30,7 @@
 ![2](https://user-images.githubusercontent.com/71905164/182770720-93402217-4e41-4fab-8211-8286668b8fce.png)
 ![3](https://user-images.githubusercontent.com/71905164/182770729-fe5141ad-01cb-447a-9533-6c18756927c0.png)
 ![4](https://user-images.githubusercontent.com/71905164/182770747-131cdbec-2304-49d9-b8d8-1d159cb82905.png)
+<a href="https://cold-charcoal.tistory.com/143">영상 보러 가기(☞ﾟヮﾟ)☞</a>
 ### API
 <a href="https://typingmylife.notion.site/MakeMigrations-API-88de2c1a1ccd457c9059c8b55ee3dc70">노션 페이지로 이동(☞ﾟヮﾟ)☞</a>
 ### ERD
