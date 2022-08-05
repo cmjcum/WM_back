@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(makemigrations.click www.makemigrations.click)
+domains=(coumi.makemigrations.click)
 rsa_key_size=4096
 data_path="./data/certbot"
 email="lhg9714@gmail.com" # Adding a valid address is strongly recommended
