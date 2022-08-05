@@ -1,4 +1,3 @@
-import django.urls
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -10,6 +9,7 @@ from .models import Article as ArticleModel
 from user.models import Planet as PlanetModel
 from user.models import User as UserModel
 from user.models import UserInfo as UserInfoModel
+
 
 def is_okay(request, planet_id):
     user = request.user
@@ -99,8 +99,8 @@ class BoardView(APIView):
                                 
             articles = ArticleModel.objects.filter(planet__id=planet_id).order_by('-create_date')[start_num-1:end_num]
             article_serializer = BoardSerialzer(articles, many=True).data
-            article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)] # 출력할 넘버링
-            article_serializer[0]["count"] = cnt # 검색 결과 개수
+            article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)]
+            article_serializer[0]["count"] = cnt
 
             return Response(article_serializer, status=status.HTTP_200_OK)
 
@@ -139,8 +139,8 @@ class BoardSearchView(APIView):
             articles = ArticleModel.objects.filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword) \
                 & Q(planet__id=planet_id)).order_by('-create_date')[start_num-1:end_num]
             article_serializer = BoardSerialzer(articles, many=True).data
-            article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)] # 출력할 넘버링
-            article_serializer[0]["count"] = cnt # 검색 결과 개수
+            article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)]
+            article_serializer[0]["count"] = cnt
 
             return Response(article_serializer, status=status.HTTP_200_OK)
 

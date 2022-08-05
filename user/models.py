@@ -1,10 +1,8 @@
-# Create your models here.
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class Planet(models.Model):
-    # 행성정보
     name = models.CharField("행성 이름", max_length=10)
     max_floor = models.IntegerField()
     max_number = models.IntegerField()

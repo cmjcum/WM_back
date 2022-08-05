@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from .models import Article as ArticleModel
 from .models import Comment as CommentModel
-from user.models import User as UserModel
 from user.models import UserInfo as UserInfoModel
 
 
