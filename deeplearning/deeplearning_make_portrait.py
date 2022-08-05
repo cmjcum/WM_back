@@ -1,3 +1,6 @@
+import django
+django.setup()
+
 import matplotlib
 matplotlib.use('Agg')
 import os, sys
@@ -21,6 +24,9 @@ from scipy.spatial import ConvexHull
 import easydict
 
 import random
+
+from user.models import UserInfo
+from user.serializers import UserInfoSerializer
 
 def load_checkpoints(config_path, checkpoint_path, cpu=False):
 
@@ -79,7 +85,7 @@ def make_animation(source_image, driving_video, generator, kp_detector, relative
     return predictions
 
 
-def make_portrait(q, img, user_id):
+def make_portrait(img, user_id):
     opt = easydict.EasyDict({
         'config': 'deeplearning/config/vox-256.yaml',
         'checkpoint': 'vox-cpk.pth.tar',
@@ -120,5 +126,9 @@ def make_portrait(q, img, user_id):
     # os.system(f'rm {filename}')
 
     portrait_url = f'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/{user_id}.gif'
+    user_info = UserInfo.objects.get(user__id=user_id)
+    data = {'portrait': portrait_url}
 
-    q.put(portrait_url)
+    user_info_serializer = UserInfoSerializer(user_info, data=data, partial=True)
+    if user_info_serializer.is_valid():
+        user_info_serializer.save()

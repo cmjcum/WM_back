@@ -26,6 +26,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         except:
             pass
 
+        try:
+            user.userprofile
+            token['has_user_info'] = True
+        except ObjectDoesNotExist:
+            token['has_user_info'] = False
+
         try: 
             token['planet'] = user.userprofile.planet.id
         except ObjectDoesNotExist:
