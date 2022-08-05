@@ -22,11 +22,6 @@ from makemigrations.permissions import HasNoUserInfoUser
 from deeplearning.deeplearning_make_portrait import make_portrait
 
 
-p = None
-
-DEFAULT_COIN = 1000
-
-
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
@@ -47,7 +42,6 @@ class UserInfoView(APIView):
     permission_classes = [HasNoUserInfoUser]
     
     def post(self, request):
-        global p
 
         request.data['user'] = request.user.id
         pic = imageio.imread(request.data.pop('portrait')[0])
