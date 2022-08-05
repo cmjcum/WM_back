@@ -37,16 +37,16 @@ else:
 
 AUTH_USER_MODEL = "user.User"
 
-# 한국 시간 설정
+
 LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'Asia/Seoul'  # 한국 시간 적용 
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False  # False 로 설정해야 DB에 변경 된 TIME_ZONE 이 반영 됨 
+USE_TZ = False
 
 
 # Application definition
@@ -72,7 +72,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -113,19 +112,6 @@ DATABASES = {
 }
 
 
-# Database settings
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.environ.get('SQL_ENGINE'),
-#         'NAME': os.environ.get('SQL_DATABASE'),
-#         'USER': os.environ.get('SQL_USER'),
-#         'PASSWORD': os.environ.get('SQL_PASSWORD'),
-#         'HOST': os.environ.get('SQL_HOST'),
-#         'PORT': os.environ.get('SQL_PORT'),
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -151,7 +137,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-# STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 STATIC_URL = '/static/'
 
@@ -164,15 +149,13 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [ # 기본적인 view 접근 권한 지정
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [ # session 혹은 token을 인증 할 클래스 설정
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication'
     ],
-    'DEFAULT_PARSER_CLASSES': [ # request.data 속성에 액세스 할 때 사용되는 파서 지정
+    'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser'
@@ -180,9 +163,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-		# Access 토큰 유효 시간 설정하기
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-		# Refresh 토큰 유효 시간 설정하기
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 
     'ROTATE_REFRESH_TOKENS': False,

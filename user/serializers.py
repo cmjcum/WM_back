@@ -2,6 +2,7 @@ import django
 django.setup()
 
 from rest_framework import serializers
+
 from user.models import User as UserModel
 from .models import Planet
 from .models import UserInfo
