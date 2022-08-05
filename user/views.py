@@ -10,13 +10,13 @@ from datetime import datetime
 from multiprocessing import Process, Queue
 import imageio
 
-from .serializers import AdditionalUserInfoSerializer, PlanetLogSerializer, PlanetSerializer, UserInfoSerializer
-from .serializers import BasicUserInfoSerializer
+from .serializers import PlanetLogSerializer, PlanetSerializer, UserInfoSerializer
 from .serializers import PlanetLog
 from user.serializers import UserSerializer
 from user.jwt_claim_serializer import CustomTokenObtainPairSerializer
 
 from .models import Planet, PlanetLog
+from .models import UserInfo
 
 from makemigrations.permissions import HasNoUserInfoUser
 from deeplearning.deeplearning_make_portrait import make_portrait
@@ -53,40 +53,21 @@ class UserInfoView(APIView):
         request.data['user'] = request.user.id
         pic = imageio.imread(request.data.pop('portrait')[0])
 
-        basic_user_info_serializer = BasicUserInfoSerializer(data=request.data)
-        if basic_user_info_serializer.is_valid():
+        user_info_serializer = UserInfoSerializer(data=request.data)
+        if user_info_serializer.is_valid():
+            user_info_serializer.save()
             q.put(request.data)
             
-            p = Process(target=make_portrait, args=(q, pic, request.user.id))
+            p = Process(target=make_portrait, args=(pic, request.user.id))
             p.start()
 
             return Response(status=status.HTTP_200_OK)
 
-        return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def save_user_info(data, q):
-    while q.qsize() < 2:
-        pass
-
-    basic_info = q.get()
-
-    data['portrait'] = q.get()
-
-    data['user'] = basic_info['user']
-    data['name'] = basic_info['name']
-    data['name_eng'] = basic_info['name_eng']
-    data['birthday'] = basic_info['birthday']
-
-    user_info_serializer = UserInfoSerializer(data=data)
-    if user_info_serializer.is_valid():
-        user_info_serializer.save()
-        
-    return
+        return Response(user_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PlanetView(APIView):
-    permission_classes = [HasNoUserInfoUser]
+    # permission_classes = [HasNoUserInfoUser]
 
     def get(self, request):
         planets = Planet.objects.all()
@@ -95,8 +76,6 @@ class PlanetView(APIView):
         return Response(planet_serializer, status=status.HTTP_200_OK)
 
     def post(self, request):
-        global p, q
-
         data = request.data
 
         planet_name = data.pop('planet')
@@ -113,15 +92,14 @@ class PlanetView(APIView):
         now = datetime.now()
         date = now.strftime('%m%d')
         data['identification_number'] = f'{planet_id}{date}{request.user.id}'
-        data['last_date'] = now.strftime('%Y-%m-%d')
-        data['coin'] = DEFAULT_COIN
+        user_info = UserInfo.objects.get(user=request.user)
 
-        additional_user_info_serializer = AdditionalUserInfoSerializer(data=data)
-        if additional_user_info_serializer.is_valid():
-            planet_process = Process(target=save_user_info, args=(data, q))
-            planet_process.start()
+        user_info_serializer = UserInfoSerializer(user_info, data=data, partial=True)
+        if user_info_serializer.is_valid():
+            user_info_serializer.save()
 
+            PlanetLog.objects.filter(planet=data['planet'], floor=data['floor'], room_number=data['room_number']).delete()
             return Response(status=status.HTTP_200_OK)
 
         PlanetLog.objects.filter(planet=data['planet'], floor=data['floor'], room_number=data['room_number']).delete()
-        return Response({"error": "failed"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(user_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

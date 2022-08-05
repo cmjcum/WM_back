@@ -68,12 +68,12 @@ class UserInfo(models.Model):
     name = models.CharField(max_length=10 )
     name_eng = models.CharField(max_length=30)
     birthday = models.DateField()
-    portrait = models.URLField()
-    floor = models.IntegerField()
-    room_number = models.IntegerField()
-    identification_number = models.IntegerField()
+    portrait = models.URLField(default='https://wm-portrait.s3.ap-northeast-2.amazonaws.com/logo/logo.png')
+    floor = models.IntegerField(null=True)
+    room_number = models.IntegerField(null=True)
+    identification_number = models.IntegerField(null=True)
     create_date = models.DateField(auto_now_add=True)
-    coin = models.IntegerField()
+    coin = models.IntegerField(default=1000)
     last_date = models.DateField(auto_now=True)
 
 
