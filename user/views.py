@@ -7,7 +7,7 @@ from rest_framework import permissions, status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from datetime import datetime
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 import imageio
 
 from .serializers import PlanetLogSerializer, PlanetSerializer, UserInfoSerializer
