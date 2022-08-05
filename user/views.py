@@ -22,7 +22,6 @@ from makemigrations.permissions import HasNoUserInfoUser
 from deeplearning.deeplearning_make_portrait import make_portrait
 
 
-q = Queue()
 p = None
 
 DEFAULT_COIN = 1000
@@ -48,7 +47,7 @@ class UserInfoView(APIView):
     permission_classes = [HasNoUserInfoUser]
     
     def post(self, request):
-        global q, p
+        global p
 
         request.data['user'] = request.user.id
         pic = imageio.imread(request.data.pop('portrait')[0])
@@ -56,8 +55,7 @@ class UserInfoView(APIView):
         user_info_serializer = UserInfoSerializer(data=request.data)
         if user_info_serializer.is_valid():
             user_info_serializer.save()
-            q.put(request.data)
-            
+
             p = Process(target=make_portrait, args=(pic, request.user.id))
             p.start()
 
