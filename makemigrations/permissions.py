@@ -13,7 +13,7 @@ class GenericAPIException(APIException):
 
 class HasNoUserInfoUser(BasePermission):
 
-    message = '이주가 완료되지 않은 유저만 접근할 수 있는 페이지입니다.'
+    message = '이주가 신청서를 작성하지 않은 유저만 접근할 수 있는 페이지입니다.'
 
     def has_permission(self, request, view):
         user = request.user
@@ -25,6 +25,29 @@ class HasNoUserInfoUser(BasePermission):
             raise GenericAPIException(status_code=status.HTTP_401_UNAUTHORIZED, detail=response)
 
         if UserInfo.objects.filter(user__id=user.id):
+            return False
+        
+        return True
+
+
+class HasNoRoom(BasePermission):
+    message = '신청서 작성 후 이주가 완료되지 않은 않은 유저만 접근할 수 있는 페이지입니다.'
+
+    def has_permission(self, request, view):
+        user = request.user
+
+        if not user.is_authenticated:
+            response ={
+                    "detail": "서비스를 이용하기 위해 로그인 해주세요.",
+                }
+            raise GenericAPIException(status_code=status.HTTP_401_UNAUTHORIZED, detail=response)
+
+        user_info = UserInfo.objects.filter(user=user)
+
+        if not user_info:
+            return False
+
+        if user_info.first().room_number:
             return False
         
         return True

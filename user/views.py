@@ -18,7 +18,8 @@ from user.jwt_claim_serializer import CustomTokenObtainPairSerializer
 from .models import Planet, PlanetLog
 from .models import UserInfo
 
-from makemigrations.permissions import HasNoUserInfoUser
+from makemigrations.permissions import HasNoUserInfoUser, HasNoRoom
+
 from deeplearning.deeplearning_make_portrait import make_portrait
 
 
@@ -59,7 +60,7 @@ class UserInfoView(APIView):
 
 
 class PlanetView(APIView):
-    # permission_classes = [HasNoUserInfoUser]
+    permission_classes = [HasNoRoom]
 
     def get(self, request):
         planets = Planet.objects.all()
