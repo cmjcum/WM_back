@@ -51,24 +51,25 @@ class PlanetSerializer(serializers.ModelSerializer):
         fields = ['name', 'max_floor', 'max_number', 'population', 'empty_rooms']
 
 
-class BasicUserInfoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserInfo
-        fields = ['user', 'name', 'name_eng', 'birthday']
-
-
-class AdditionalUserInfoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserInfo
-        fields = ['planet', 'identification_number', 'last_date', 'coin',
-                'floor', 'room_number']
-
-
 class UserInfoSerializer(serializers.ModelSerializer):
+
+    def update(self, instance, validated_data):
+        instance.planet = validated_data.get('planet', instance.planet)
+        instance.identification_number = validated_data.get('identification_number', instance.identification_number)
+        instance.floor = validated_data.get('floor', instance.floor)
+        instance.room_number = validated_data.get('room_number', instance.room_number)
+
+        instance.portrait = validated_data.get('portrait', instance.portrait)
+
+        instance.save()
+        
+        return instance
+
     class Meta:
         model = UserInfo
-        fields = ['user', 'planet', 'name', 'name_eng', 'birthday', 'portrait',
-                'floor', 'room_number', 'identification_number', 'coin', 'last_date']
+        fields = ['user', 'name', 'name_eng', 'birthday',
+                  'planet', 'identification_number', 'floor', 'room_number',
+                  'portrait']
 
 
 class PlanetLogSerializer(serializers.ModelSerializer):

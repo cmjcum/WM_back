@@ -1,5 +1,4 @@
 ![image](https://user-images.githubusercontent.com/71905164/182584327-171cf850-0bd8-4d62-bdec-1ba090eb9b71.png)
-
 # 🚀MakeMigrations
 딥페이크를 이용하여 움직이는 사진을 생성, 지구 밖 행성들의 시민권을 만들어주는 웹사이트
 
@@ -26,6 +25,12 @@
 * 바닐라 JS로 구현한 방 꾸미기 기능
 ### Architecture
 ![image](https://user-images.githubusercontent.com/71905164/182599471-7262271c-a5b7-4379-8460-0a9b933a51dc.png)
+### 실행 화면
+![1](https://user-images.githubusercontent.com/71905164/182770710-17111bfc-49fc-4740-9eff-d3fce080082e.png)
+![2](https://user-images.githubusercontent.com/71905164/182770720-93402217-4e41-4fab-8211-8286668b8fce.png)
+![3](https://user-images.githubusercontent.com/71905164/182770729-fe5141ad-01cb-447a-9533-6c18756927c0.png)
+![4](https://user-images.githubusercontent.com/71905164/182770747-131cdbec-2304-49d9-b8d8-1d159cb82905.png)
+<a href="https://cold-charcoal.tistory.com/143">영상 보러 가기(☞ﾟヮﾟ)☞</a>
 ### API
 <a href="https://typingmylife.notion.site/MakeMigrations-API-88de2c1a1ccd457c9059c8b55ee3dc70">노션 페이지로 이동(☞ﾟヮﾟ)☞</a>
 ### ERD
