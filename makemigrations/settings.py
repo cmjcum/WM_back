@@ -143,6 +143,8 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -202,3 +204,55 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+
+# 로그폴더 생성
+ROOT_DIR = os.path.dirname(BASE_DIR)
+LOG_DIR = os.path.join(ROOT_DIR, '.log')
+# 로그 폴더가 존재하지 않으면 폴더 생성
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR, exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '[%(levelname)s] %(name)s (%(asctime)s)\n\t%(message)s'
+        },
+    },
+    'handlers': {
+        'file_error': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': 'ERROR',
+            'filename': os.path.join(LOG_DIR, 'error.log'),
+            'formatter': 'default',
+            'maxBytes': 10485760,
+            'backupCount': 10,
+        },
+        'file_info': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': 'INFO',
+            'filename': os.path.join(LOG_DIR, 'info.log'),
+            'formatter': 'default',
+            'maxBytes': 10485760,
+            'backupCount': 10,
+        },
+        # console에 StreamHandler는
+        # 터미널창에 표시
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'INFO',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': [
+                'file_error',
+                'file_info',
+                'console',
+            ],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    }
+}
