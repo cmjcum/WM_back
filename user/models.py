@@ -69,7 +69,7 @@ class UserInfo(models.Model):
     name_eng = models.CharField(max_length=30)
     birthday = models.DateField()
     portrait = models.URLField(default='https://wm-portrait.s3.ap-northeast-2.amazonaws.com/logo/logo.png')
-    floor = models.IntegerField(null=True)
+    floor = models.IntegerField(default=100000)
     room_number = models.IntegerField(null=True)
     identification_number = models.IntegerField(null=True)
     create_date = models.DateField(auto_now_add=True)
