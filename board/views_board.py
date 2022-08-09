@@ -119,8 +119,7 @@ class BoardSearchView(APIView):
 
         if is_okay(request, planet_id):
 
-            cnt = ArticleModel.objects.filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword) \
-                    & Q(planet__id=planet_id)).count()
+            cnt = ArticleModel.objects.filter(planet__id=planet_id).filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword)).count()
             if cnt == 0:
                 return Response({"message": "작성된 글이 없어요!"}, status=status.HTTP_200_OK)
             
@@ -136,8 +135,7 @@ class BoardSearchView(APIView):
             if cnt < end_num:
                 end_num = start_num + (cnt-start_num)
                                 
-            articles = ArticleModel.objects.filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword) \
-                & Q(planet__id=planet_id)).order_by('-create_date')[start_num-1:end_num]
+            articles = ArticleModel.objects.filter(planet__id=planet_id).filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (author__nickname__icontains=keyword)).order_by('-create_date')[start_num-1:end_num]
             article_serializer = BoardSerialzer(articles, many=True).data
             article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)]
             article_serializer[0]["count"] = cnt
