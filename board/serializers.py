@@ -14,6 +14,10 @@ class CommentPostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 detail={"error": "내용을 작성해주세요!"},
             )
+        if '<' in data.get('content'):
+            data.get('content').replace('<', '&lt;')
+        if '>' in data.get('content'):
+            data.get('content').replace('>', '&gt;')
         return data
 
     def create(self, validated_data):   
@@ -47,6 +51,10 @@ class ArticlePostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 detail={"error": "내용은 비워둘 수 없습니다."},
             )
+        if '<' in data.get('content'):
+            data.get('content').replace('<', '&lt;')
+        if '>' in data.get('content'):
+            data.get('content').replace('>', '&gt;')
         return data
 
     def create(self, validated_data):   
