@@ -23,7 +23,7 @@ services:
 
   web:
     build: .
-    image: ${{ secrets.DOCKERHUB_USERNAME }}/wm_back:${{ secrets.version_tag }}
+    image: ${{ secrets.DOCKERHUB_USERNAME }}/wm_back:${{ secrets.VERSION_TAG }}
     command: gunicorn makemigrations.wsgi:application --bind 0.0.0.0:8000
     ports:
       - 8000:8000
