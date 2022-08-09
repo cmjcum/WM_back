@@ -103,6 +103,19 @@ class RoomDataSerializer(serializers.ModelSerializer):
 
 
 class PostGuestBookModelSerializer(serializers.ModelSerializer):
+
+    def validate(self, data):
+        if '<' in data.get('content'):
+            data.get('content').replace('<', '&lt;')
+        if '>' in data.get('content'):
+            data.get('content').replace('>', '&gt;')
+        return data
+
+    def create(self, validated_data):   
+        article = GuestBookModel(**validated_data)
+        article.save()
+        return validated_data
+        
     class Meta:
         model = GuestBookModel
         fields = ["content","author", "owner"]
