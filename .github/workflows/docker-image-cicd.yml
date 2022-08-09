@@ -1,4 +1,4 @@
-name: Docker Image CICD
+name: Docker Image CI-CD
 on:
   push:
     branches:
@@ -45,7 +45,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           source: "docker-compose.prod.yml"
-          target: "/home/ubuntu/"
+          target: "/home/ubuntu/WM_back"
 
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
@@ -54,4 +54,4 @@ jobs:
           username: ubuntu
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
-          script: "docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml up -d"
+          script: "sudo docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml up -d"
