@@ -23,7 +23,7 @@ services:
 
   web:
     build: .
-    image: cherno0/wm_back:v1.0.2
+    image: cherno0/wm_back:v1.0.3
     command: gunicorn makemigrations.wsgi:application --bind 0.0.0.0:8000
     ports:
       - 8000:8000
