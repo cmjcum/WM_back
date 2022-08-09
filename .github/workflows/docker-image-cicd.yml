@@ -1,4 +1,4 @@
-name: Docker Image CICD
+name: Docker Image CI-CD
 on:
   push:
     branches:
@@ -47,7 +47,7 @@ jobs:
           source: "docker-compose.prod.yml"
           target: "/home/ubuntu/"
 
-      - name: executing remote ssh commands using password
+      - name: executing remote ssh commands using password2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
