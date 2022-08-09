@@ -14,10 +14,13 @@ class CommentPostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 detail={"error": "내용을 작성해주세요!"},
             )
+
+        content_data = data.get('content')
         if '<' in data.get('content'):
-            data.get('content').replace('<', '&lt;')
-        if '>' in data.get('content'):
-            data.get('content').replace('>', '&gt;')
+            content_data = content_data.replace('<', '&lt;')
+            if '>' in data.get('content'):
+                data['content'] = content_data.replace('>', '&gt;')
+                
         return data
 
     def create(self, validated_data):   
@@ -51,14 +54,19 @@ class ArticlePostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 detail={"error": "내용은 비워둘 수 없습니다."},
             )
-        if '<' in data.get('title'):
-            data.get('title').replace('<', '&lt;')
-        if '>' in data.get('title'):
-            data.get('title').replace('>', '&gt;')
+
+        content_data = data.get('content')
         if '<' in data.get('content'):
-            data.get('content').replace('<', '&lt;')
-        if '>' in data.get('content'):
-            data.get('content').replace('>', '&gt;')
+            content_data = content_data.replace('<', '&lt;')
+            if '>' in data.get('content'):
+                data['content'] = content_data.replace('>', '&gt;')
+
+        title_data = data.get('title')
+        if '<' in data.get('title'):
+            title_data = title_data.replace('<', '&lt;')
+            if '>' in data.get('title'):
+                data['title'] = title_data.replace('>', '&gt;')
+
         return data
 
     def create(self, validated_data):   
