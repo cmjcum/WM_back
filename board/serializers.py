@@ -51,6 +51,10 @@ class ArticlePostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 detail={"error": "내용은 비워둘 수 없습니다."},
             )
+        if '<' in data.get('title'):
+            data.get('title').replace('<', '&lt;')
+        if '>' in data.get('title'):
+            data.get('title').replace('>', '&gt;')
         if '<' in data.get('content'):
             data.get('content').replace('<', '&lt;')
         if '>' in data.get('content'):
@@ -68,7 +72,7 @@ class ArticlePostSerializer(serializers.ModelSerializer):
         for key, value in validated_data.items():
             if key == 'content':
                 value = value + f'\r\n({formatted_date}에 마지막으로 수정됨)'
-                setattr(instance, key, value)
+            setattr(instance, key, value)
         instance.save()
         return instance
 
