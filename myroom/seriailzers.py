@@ -105,10 +105,13 @@ class RoomDataSerializer(serializers.ModelSerializer):
 class PostGuestBookModelSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
+
+        content_data = data.get('content')
         if '<' in data.get('content'):
-            data.get('content').replace('<', '&lt;')
-        if '>' in data.get('content'):
-            data.get('content').replace('>', '&gt;')
+            content_data = content_data.replace('<', '&lt;')
+            if '>' in data.get('content'):
+                data['content'] = content_data.replace('>', '&gt;')
+
         return data
 
     def create(self, validated_data):   
