@@ -149,7 +149,7 @@ class ShopView(APIView):
     def post(self, request):
         request.data['user'] = request.user.id
 
-        user_info = UserInfoModel.objects.get(id=request.user.userprofile.id)
+        user_info = UserInfoModel.objects.get(user=request.user)
         price = Furniture.objects.get(id=request.data['furniture']).price
         if user_info.coin < price:
             return Response({'msg': '코인이 부족합니다!'}, status=status.HTTP_200_OK)
