@@ -16,6 +16,7 @@ from user.models import User as UserModel
 from .models import Furniture
 from .models import MyFurniture
 from .models import FurniturePosition
+from user.models import UserInfo
 
 class UserInfoView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -141,8 +142,9 @@ class ShopView(APIView):
         my_furniture_id_list = [ mf.furniture.id for mf in MyFurniture.objects.filter(user=request.user) ]
         furnitures = Furniture.objects.exclude(id__in=my_furniture_id_list)
         shop_serializer = FurnitureSerializer(furnitures, many=True).data
+        coin = UserInfo.objects.get(user=request.user).coin
 
-        return Response(shop_serializer, status=status.HTTP_200_OK)
+        return Response({'coin': coin, 'shop_serializer': shop_serializer}, status=status.HTTP_200_OK)
 
     def post(self, request):
         request.data['user'] = request.user.id
@@ -157,6 +159,10 @@ class ShopView(APIView):
             user_info.coin -= price
             user_info.save()
             my_furniture_serializer.save()
-            return Response({'msg': '구매 완료!'}, status=status.HTTP_200_OK)
+
+            coin = UserInfo.objects.get(user=request.user).coin
+            msg = f'구매 완료! {coin} 코인 남았습니다.'
+
+            return Response({'msg': msg, 'coin': coin}, status=status.HTTP_200_OK)
 
         return Response(my_furniture_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
