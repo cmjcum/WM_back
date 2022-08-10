@@ -151,8 +151,9 @@ class ShopView(APIView):
 
         user_info = UserInfoModel.objects.get(user=request.user)
         price = Furniture.objects.get(id=request.data['furniture']).price
-        if user_info.coin < price:
-            return Response({'msg': '코인이 부족합니다!'}, status=status.HTTP_200_OK)
+        coin = user_info.coin
+        if coin < price:
+            return Response({'flag': False, 'msg': '코인이 부족합니다!', 'coin': coin}, status=status.HTTP_200_OK)
         
         my_furniture_serializer = MyFurnitureSerializer(data=request.data)
         if my_furniture_serializer.is_valid():
@@ -163,6 +164,6 @@ class ShopView(APIView):
             coin = UserInfo.objects.get(user=request.user).coin
             msg = f'구매 완료! {coin} 코인 남았습니다.'
 
-            return Response({'msg': msg, 'coin': coin}, status=status.HTTP_200_OK)
+            return Response({'flag': True, 'msg': msg, 'coin': coin}, status=status.HTTP_200_OK)
 
         return Response(my_furniture_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
