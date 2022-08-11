@@ -75,6 +75,7 @@ class UserInfo(models.Model):
     create_date = models.DateField(auto_now_add=True)
     coin = models.IntegerField(default=1000)
     last_date = models.DateField(auto_now=True)
+    status_message = models.CharField(max_length=20, default='', blank=True)
 
 
 class ArticleLike(models.Model):

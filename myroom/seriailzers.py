@@ -93,13 +93,34 @@ class UserInfoModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfoModel
         fields = ["name", "name_eng", "birthday", "portrait", "coin", "user_id",
-                    "user", "floor", "room_number", "planet", "identification_number", "create_date"]
+                    "user", "floor", "room_number", "planet", "identification_number", "create_date", "status_message"]
 
 
 class RoomDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfoModel
-        fields = ["name" "portrait"]
+        fields = ["name", "portrait"]
+
+
+# TODO: 상태 메세지
+class StatusMessageSerializer(serializers.ModelSerializer):
+
+    def update(self, instance, validated_data):
+            instance.status_message = validated_data.get('status_message', instance.status_message)
+            instance.save()
+            return instance
+
+    def validate(self, data):
+        status_message_data = data.get('status_message')
+        if '<' in data.get('status_message'):
+            status_message_data = status_message_data.replace('<', '&lt;')
+            if '>' in data.get('status_message'):
+                data['status_message'] = status_message_data.replace('>', '&gt;')
+        return data
+        
+    class Meta:
+        model = UserInfoModel
+        fields = ["status_message"]
 
 
 class PostGuestBookModelSerializer(serializers.ModelSerializer):
