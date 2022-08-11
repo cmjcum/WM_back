@@ -12,4 +12,5 @@ urlpatterns = [
     path('furniture/', views.MyFurnitureView.as_view()),
     path('room/<owner_id>/', views.MyRoomView.as_view()),
     path('shop/', views.ShopView.as_view()),
+    path('shop/<str:search_word>', views.ShopSearchView.as_view()),
 ]

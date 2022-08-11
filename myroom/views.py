@@ -181,3 +181,13 @@ class ShopView(APIView):
             return Response({'flag': True, 'msg': msg, 'coin': coin}, status=status.HTTP_200_OK)
 
         return Response(my_furniture_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ShopSearchView(APIView):
+    def get(self, request, search_word):
+        my_furniture_id_list = [ mf.furniture.id for mf in MyFurniture.objects.filter(user=request.user) ]
+        furnitures = Furniture.objects.exclude(id__in=my_furniture_id_list).filter(name__icontains=search_word)
+        shop_serializer = FurnitureSerializer(furnitures, many=True).data
+        coin = UserInfo.objects.get(user=request.user).coin
+
+        return Response({'coin': coin, 'shop_serializer': shop_serializer}, status=status.HTTP_200_OK)
