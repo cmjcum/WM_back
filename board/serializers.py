@@ -146,6 +146,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     likes_cnt = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
     moved = serializers.SerializerMethodField()
+    # prev = serializers.SerializerMethodField()
+    # next = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
         if UserInfoModel.objects.filter(user__id=obj.author.id):
@@ -204,6 +206,10 @@ class BoardSerialzer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField()
     newest = serializers.SerializerMethodField()
     moved = serializers.SerializerMethodField()
+    planet = serializers.SerializerMethodField()
+
+    def get_planet(self, obj):
+        return obj.planet.name
 
     def get_moved(self, obj):
         if UserInfoModel.objects.filter(user__id=obj.author.id):
@@ -244,4 +250,5 @@ class BoardSerialzer(serializers.ModelSerializer):
             "comments",
             "likes",
             "moved",
+            "planet",
         ]

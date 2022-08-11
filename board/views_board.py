@@ -102,9 +102,33 @@ class BoardView(APIView):
             article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)]
             article_serializer[0]["count"] = cnt
 
+            return Response(article_serializer, status=status.HTTP_200_OK)\
+
+        else:
+            cnt = ArticleModel.objects.filter(planet__id=8).count()
+
+            if cnt == 0:
+                return Response({"message": "작성된 글이 없어요!"}, status=status.HTTP_200_OK)
+
+            if page == 1:
+                start_num = page
+                end_num = page *20
+
+            else:
+                start_num = (page-1) *20 +1
+                end_num = page *20
+
+            if cnt < end_num:
+                end_num = start_num + (cnt-start_num)
+                                
+            articles = ArticleModel.objects.filter(planet__id=8).order_by('-create_date')[start_num-1:end_num]
+            article_serializer = BoardSerialzer(articles, many=True).data
+            article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)]
+            article_serializer[0]["count"] = cnt
+
             return Response(article_serializer, status=status.HTTP_200_OK)
 
-        return Response({"detail": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
+        # return Response({"detail": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class BoardSearchView(APIView):
@@ -145,7 +169,37 @@ class BoardSearchView(APIView):
         return Response({"detail": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+class MyArticlesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
+    def get(self, request, page):
+        '''
+        내가 작성한 게시글을 모아서 보여줍니다.
+        '''
+        user = request.user
+        cnt = ArticleModel.objects.filter(author=user).count()
+        if cnt == 0:
+            return Response({"message": "작성된 글이 없어요!"}, status=status.HTTP_200_OK)
+        
+        if page == 1:
+            start_num = page
+            end_num = page *20
+
+        else:
+            start_num = (page-1) *20 +1
+            end_num = page *20
+
+
+        if cnt < end_num:
+            end_num = start_num + (cnt-start_num)
+                            
+        articles = ArticleModel.objects.filter(author=user).order_by('-create_date')[start_num-1:end_num]
+        article_serializer = BoardSerialzer(articles, many=True).data
+        article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)]
+        article_serializer[0]["count"] = cnt
+
+        return Response(article_serializer, status=status.HTTP_200_OK)
 
 
 

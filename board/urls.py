@@ -19,4 +19,6 @@ urlpatterns = [
     path('<int:planet_id>/<int:article_id>/del/<int:reply_id>/', views_comment.CommentView.as_view()),
 
     path('like/<int:article_id>/', views_article.ArticleLikeControllerView.as_view()),
+
+    path('mypage/<int:page>/', views_board.MyArticlesView.as_view()),
 ]
