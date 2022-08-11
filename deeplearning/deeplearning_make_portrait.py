@@ -123,7 +123,7 @@ def make_portrait(img, user_id):
     imageio.mimsave(filename, [img_as_ubyte(frame) for frame in predictions], fps=fps)
 
     os.system(f'aws s3 cp {filename} s3://wm-portrait --acl public-read')
-    # os.system(f'rm {filename}')
+    os.system(f'rm {filename}')
 
     portrait_url = f'https://wm-portrait.s3.ap-northeast-2.amazonaws.com/{user_id}.gif'
     user_info = UserInfo.objects.get(user__id=user_id)
