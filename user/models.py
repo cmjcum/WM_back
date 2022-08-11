@@ -65,7 +65,7 @@ class User(AbstractBaseUser):
 class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
     planet = models.ForeignKey(Planet, on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=10 )
+    name = models.CharField(max_length=10)
     name_eng = models.CharField(max_length=30)
     birthday = models.DateField()
     portrait = models.URLField(default='https://wm-portrait.s3.ap-northeast-2.amazonaws.com/logo/logo.png')
@@ -75,6 +75,7 @@ class UserInfo(models.Model):
     create_date = models.DateField(auto_now_add=True)
     coin = models.IntegerField(default=1000)
     last_date = models.DateField(auto_now=True)
+    status_message = models.CharField(max_length=20, default='', blank=True)
 
 
 class ArticleLike(models.Model):

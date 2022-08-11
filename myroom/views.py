@@ -3,7 +3,6 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-
 from myroom.seriailzers import UserInfoModelSerializer
 from myroom.seriailzers import PostGuestBookModelSerializer
 from myroom.seriailzers import GetGuestBookModelSerializer
@@ -16,6 +15,11 @@ from user.models import User as UserModel
 from .models import Furniture
 from .models import MyFurniture
 from .models import FurniturePosition
+
+
+from myroom.seriailzers import StatusMessageSerializer
+
+
 
 class UserInfoView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -35,6 +39,16 @@ class UserInfoView(APIView):
             follow_data["follow_user"] = bool(user_id in follow_user_id)
             like_data["like_user"] = bool(user_id in like_user_id)
             return Response(profile.data, status=status.HTTP_200_OK)
+
+    def put(self, request, owner_id):
+        user_info = UserInfoModel.objects.get(user=request.user)
+        status_message = StatusMessageSerializer(user_info, data=request.data)
+    
+        if status_message.is_valid():        
+            status_message.save()
+            return Response({'message': '상메 작성 완료!'})
+        else:
+            return Response({'message': '다시 입력해 주세요'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GuestBookView(APIView):
