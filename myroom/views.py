@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from myroom.seriailzers import UserInfoModelSerializer
 from myroom.seriailzers import PostGuestBookModelSerializer
 from myroom.seriailzers import GetGuestBookModelSerializer
+from myroom.seriailzers import StatusMessageSerializer
 from .seriailzers import MyFurnitureSerializer
 from .seriailzers import FurniturePositionSerializer
 from .seriailzers import FurnitureSerializer
@@ -16,9 +17,6 @@ from .models import Furniture
 from .models import MyFurniture
 from .models import FurniturePosition
 from user.models import UserInfo
-
-
-from myroom.seriailzers import StatusMessageSerializer
 
 
 

@@ -59,6 +59,21 @@ class UserInfoView(APIView):
         return Response(user_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class PutPortraitView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def put(self, request, owner_id):
+        if request.user.id == owner_id:
+
+            print(request.data)
+            pic = imageio.imread(request.data.pop('portrait')[0])
+            p = Process(target=make_portrait, args=(pic, request.user.id))
+            p.start()
+
+            return Response({'message': '프로필 수정 완료!'})
+            
+        return Response({'message': '프로필 수정 실패'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class PlanetView(APIView):
     permission_classes = [HasNoRoom]
 

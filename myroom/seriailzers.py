@@ -102,7 +102,6 @@ class RoomDataSerializer(serializers.ModelSerializer):
         fields = ["name", "portrait"]
 
 
-# TODO: 상태 메세지
 class StatusMessageSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
