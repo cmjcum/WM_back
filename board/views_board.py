@@ -202,6 +202,38 @@ class MyArticlesView(APIView):
         return Response(article_serializer, status=status.HTTP_200_OK)
 
 
+class MyArticlesSearchView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, page, keyword):
+        '''
+        내가 작성한 게시글을 모아서 보여줍니다.
+        '''
+        user = request.user
+        cnt = ArticleModel.objects.filter(author=user).filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (planet__name__icontains=keyword)).count()
+        if cnt == 0:
+            return Response({"message": "해당하는 조건의 글이 없어요!"}, status=status.HTTP_200_OK)
+        
+        if page == 1:
+            start_num = page
+            end_num = page *20
+
+        else:
+            start_num = (page-1) *20 +1
+            end_num = page *20
+
+        if cnt < end_num:
+            end_num = start_num + (cnt-start_num)
+                            
+        articles = ArticleModel.objects.filter(author=user).filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (planet__name__icontains=keyword)).order_by('-create_date')[start_num-1:end_num]
+        article_serializer = BoardSerialzer(articles, many=True).data
+        article_serializer[0]["num"] = [i for i in range(start_num, end_num+1)]
+        article_serializer[0]["count"] = cnt
+
+        return Response(article_serializer, status=status.HTTP_200_OK)
+
+
 
 
     

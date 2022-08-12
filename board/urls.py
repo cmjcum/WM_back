@@ -21,4 +21,5 @@ urlpatterns = [
     path('like/<int:article_id>/', views_article.ArticleLikeControllerView.as_view()),
 
     path('mypage/<int:page>/', views_board.MyArticlesView.as_view()),
+    path('mypage/<str:keyword>/<int:page>/', views_board.MyArticlesSearchView.as_view()),
 ]
