@@ -208,7 +208,7 @@ class MyArticlesSearchView(APIView):
 
     def get(self, request, page, keyword):
         '''
-        내가 작성한 게시글을 모아서 보여줍니다.
+        내가 작성한 게시글 중에서 검색합니다.
         '''
         user = request.user
         cnt = ArticleModel.objects.filter(author=user).filter(Q (title__icontains=keyword) | Q (content__icontains=keyword) | Q (planet__name__icontains=keyword)).count()
