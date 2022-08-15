@@ -45,6 +45,19 @@ class ArticleDetailView(APIView):
             article = ArticleModel.objects.get(id=article_id)
             article_serializer = ArticleSerializer(article).data
             article_serializer["liked_this"] = bool(user in article_serializer["likes"])
+            
+            next = ArticleModel.objects.filter(planet__id=planet_id).filter(id__gt=article_id).first()
+            prev = ArticleModel.objects.filter(planet__id=planet_id).filter(id__lt=article_id).last()
+
+            if next:
+                next = next.id
+                next_url = f'/board/article.html?board={planet_id}&article={next}'
+                article_serializer["next"] = next_url
+
+            if prev:
+                prev = prev.id
+                prev_url = f'/board/article.html?board={planet_id}&article={prev}'
+                article_serializer["prev"] = prev_url
 
             return Response(article_serializer, status=status.HTTP_200_OK)
         return Response({"detail":"조회 권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
