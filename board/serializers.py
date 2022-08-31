@@ -146,8 +146,6 @@ class ArticleSerializer(serializers.ModelSerializer):
     likes_cnt = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
     moved = serializers.SerializerMethodField()
-    # prev = serializers.SerializerMethodField()
-    # next = serializers.SerializerMethodField()
 
     def get_moved(self, obj):
         if UserInfoModel.objects.filter(user__id=obj.author.id):

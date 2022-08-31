@@ -64,7 +64,6 @@ class PutPortraitView(APIView):
     def put(self, request, owner_id):
         if request.user.id == owner_id:
 
-            print(request.data)
             pic = imageio.imread(request.data.pop('portrait')[0])
             p = Process(target=make_portrait, args=(pic, request.user.id))
             p.start()

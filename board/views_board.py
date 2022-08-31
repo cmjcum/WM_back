@@ -128,8 +128,6 @@ class BoardView(APIView):
 
             return Response(article_serializer, status=status.HTTP_200_OK)
 
-        # return Response({"detail": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 class BoardSearchView(APIView):
     permission_classes = [permissions.IsAuthenticated]
